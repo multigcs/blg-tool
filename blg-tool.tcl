@@ -250,6 +250,8 @@ set motorRollDir 0
 set accelWeight 0.0
 set motorUpdateFreq 0
 set rcGain 0.0
+set reverseZ 0
+set swapXY 0
 set CHART_SCALE 0.5
 set buffer ""
 set mode "OAC"
@@ -483,6 +485,9 @@ proc save_values {} {
 	global motorUpdateFreq
 	global rcAbsolute
 	global rcGain
+	global reverseZ
+	global swapXY
+
 	.bottom.info configure -text "saving values"
 	.bottom.info configure -background yellow
 	update
@@ -523,6 +528,9 @@ proc save_values {} {
 	flush $Serial
 	after 100
         puts -nonewline $Serial "SRG $rcGain\n"
+	flush $Serial
+	after 100
+        puts -nonewline $Serial "SSO $reverseZ $swapXY\n"
 	flush $Serial
 	after 100 send_tc
 }
@@ -587,6 +595,8 @@ proc save_values2file {} {
 	global motorUpdateFreq
 	global rcAbsolute
 	global rcGain
+	global reverseZ
+	global swapXY
 	set types {
 		{"Text files"		{.txt}	}
 		{"Text files"		{}		TEXT}
@@ -613,6 +623,7 @@ proc save_values2file {} {
 	        puts -nonewline $fp "SRC $rcPitchMin $rcPitchMax $rcRollMin $rcRollMax\n"
 	        puts -nonewline $fp "SCA $rcAbsolute\n"
 	        puts -nonewline $fp "SRG $rcGain\n"
+	        puts -nonewline $fp "SSO $reverseZ $swapXY\n"
 		close $fp
 	}
 }
@@ -722,6 +733,8 @@ proc rd_chid {chid} {
 	global rcAbsolute
 	global VERSION
 	global rcGain
+	global reverseZ
+	global swapXY
 	if {$chid == 0} {
 		return
 	}
@@ -1290,8 +1303,18 @@ pack .note -fill both -expand yes -fill both -padx 2 -pady 3
 	labelframe .note.general.settings -text "General"
 	pack .note.general.settings -side top -expand yes -fill both
 
-		gui_check .note.general.settings.rcAbsolute rcAbsolute "RC Abs/Prop" "Absolute" "absolute or incremental rc input" "Absolute or Proportional mode is for RC Channel, Proportional is when you are using a second RC Transmitter to control your Gimbal, Absolute for normal Pot control on your RC Transmitter"
-		gui_spin .note.general.settings.rcGain rcGain 0.0 200.0 0.2 "rcGain" "rc gain" "the RC Gain, how fast it react when you are change you RC channel you have it connected to"
+		labelframe .note.general.settings.rc -text "RC"
+		pack .note.general.settings.rc -side left -expand yes -fill both
+
+			gui_check .note.general.settings.rc.rcAbsolute rcAbsolute "RC Abs/Prop" "Absolute" "absolute or incremental rc input" "Absolute or Proportional mode is for RC Channel, Proportional is when you are using a second RC Transmitter to control your Gimbal, Absolute for normal Pot control on your RC Transmitter"
+			gui_spin .note.general.settings.rc.rcGain rcGain 0.0 200.0 0.2 "rcGain" "rc gain" "the RC Gain, how fast it react when you are change you RC channel you have it connected to"
+
+		labelframe .note.general.settings.sensor -text "Sensor"
+		pack .note.general.settings.sensor -side left -expand yes -fill both
+
+			gui_check .note.general.settings.sensor.flip reverseZ "reverseZ" "reversed" "Set Sensor Orientation: Z" "Sensor - Orientation"
+			gui_check .note.general.settings.sensor.flop swapXY "swapXY" "swapped" "Set Sensor Orientation: XY" "Sensor - Orientation"
+
 
 	labelframe .note.general.chart -text "Chart"
 	pack .note.general.chart -side top -expand no -fill both
