@@ -1632,7 +1632,7 @@ pack .bottom -side top -expand no -fill x
 	setTooltip .bottom.info "status informations"
 
 
-if {1 == 2} {
+if {1 == 1} {
 	disable_all .note
 	disable_all .buttons
 	disable_all .buttons_ext
