@@ -1427,23 +1427,45 @@ proc update_mpu {n1 n2 op} {
 	global reverseZ
 	global swapXY
 	.note.general.settings.sensor.img.canv delete "arrows"
+#	if {$swapXY == 1} {
+#		.note.general.settings.sensor.img.canv create line 100 50 67 13 -fill green -arrow last -tag arrows
+#		.note.general.settings.sensor.img.canv create line 100 50 53 72 -fill red -arrow last -tag arrows
+#		if {$reverseZ == 1} {
+#			.note.general.settings.sensor.img.canv create line 100 50 100 100 -fill blue -arrow last -tag arrows
+#		} else {
+#			.note.general.settings.sensor.img.canv create line 100 50 100 5 -fill blue -arrow last -tag arrows
+#		}
+#	} else {
+#		.note.general.settings.sensor.img.canv create line 18 38 60 15 -fill red -arrow last -tag arrows
+#		.note.general.settings.sensor.img.canv create line 18 38 50 75 -fill green -arrow last -tag arrows
+#		if {$reverseZ == 1} {
+#			.note.general.settings.sensor.img.canv create line 18 38 18 100 -fill blue -arrow last -tag arrows
+#		} else {
+#			.note.general.settings.sensor.img.canv create line 18 38 18 5 -fill blue -arrow last -tag arrows
+#		}
+#	}
+
 	if {$swapXY == 1} {
-		.note.general.settings.sensor.img.canv create line 100 50 67 13 -fill green -arrow last -tag arrows
-		.note.general.settings.sensor.img.canv create line 100 50 53 72 -fill red -arrow last -tag arrows
-		if {$reverseZ == 1} {
-			.note.general.settings.sensor.img.canv create line 100 50 100 100 -fill blue -arrow last -tag arrows
-		} else {
-			.note.general.settings.sensor.img.canv create line 100 50 100 5 -fill blue -arrow last -tag arrows
-		}
+		.note.general.settings.sensor.img.canv create line 18 38 60 15 -fill green -arrow last -tag arrows
+		.note.general.settings.sensor.img.canv create line 18 38 50 75 -fill red -arrow last -tag arrows
+		.note.general.settings.sensor.img.canv create text 55 75 -text "X" -fill red -tag arrows
+		.note.general.settings.sensor.img.canv create text 65 15 -text "Y" -fill green -tag arrows
 	} else {
 		.note.general.settings.sensor.img.canv create line 18 38 60 15 -fill red -arrow last -tag arrows
 		.note.general.settings.sensor.img.canv create line 18 38 50 75 -fill green -arrow last -tag arrows
-		if {$reverseZ == 1} {
-			.note.general.settings.sensor.img.canv create line 18 38 18 100 -fill blue -arrow last -tag arrows
-		} else {
-			.note.general.settings.sensor.img.canv create line 18 38 18 5 -fill blue -arrow last -tag arrows
-		}
+		.note.general.settings.sensor.img.canv create text 65 15 -text "X" -fill red -tag arrows
+		.note.general.settings.sensor.img.canv create text 55 75 -text "Y" -fill green -tag arrows
 	}
+	if {$reverseZ == 1} {
+		.note.general.settings.sensor.img.canv create line 18 38 18 100 -fill blue -arrow last -tag arrows
+		.note.general.settings.sensor.img.canv create text 23 100 -text "Z" -fill blue -tag arrows
+	} else {
+		.note.general.settings.sensor.img.canv create line 18 38 18 5 -fill blue -arrow last -tag arrows
+		.note.general.settings.sensor.img.canv create text 23 7 -text "Z" -fill blue -tag arrows
+	}
+
+
+
 }
 
 trace variable reverseZ w update_mpu
@@ -1610,7 +1632,7 @@ pack .bottom -side top -expand no -fill x
 	setTooltip .bottom.info "status informations"
 
 
-if {1 == 1} {
+if {1 == 2} {
 	disable_all .note
 	disable_all .buttons
 	disable_all .buttons_ext
