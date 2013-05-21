@@ -62,6 +62,138 @@ NGQw65ltUxaTGUUcKiGry61um0LA3kbitwPhxSK+INzhPqVQkHiQIi7RGIP4wrl6ieopMxMJS0Ti
 u5ewLXYRUwtMUEK6BaXELsbL3va6973wja9850vf+tr3vvhFSUAAADs=
 }
 
+
+image create photo sensor -data {
+R0lGODlheABmAOf8ACQlJiUmKScoKysrLSgpJy4wLzExLi0uMjEvMy8wMy4yOTIzNTY4Nzk5NjU2
+OTc4Ozo7PTk3OjEvLBwdH0c9PFg9OFI6L3I6Mz5BPz5GN0FBPklFOlhEOlVRPWRIO3RLOz0+QTg7
+Q0I+REk+ST9BQz1IRzlVVEJDRUtEREVJRkpKRkVFSUpFS0ZJTEpLTVNFQ1JNTFhKR05RTkdSSlJS
+TVlTSkZMUkxNUkpJVlJNU1ZMVk5RU0xTW0hVV1NTVFpUVFZYVlpZVlRVWVtUW1ZZW1tbXGVKR2dT
+SXdVSmNcW2hYV3ZbWHJNRl1hXlVlXEZgX2JiXmpjXXhjW21gTktaYl1eYVZZY2JdZGpeZ3Jeal5h
+Y11laltoaFZsbmNjZGtkZGVpZmtqZmVlaWpla2Vpa2trbHJsbHdoZ25xbmVxbHJybnlybWVtcmxt
+cmhpdHJtdHdqdW5xdG1zemh0dXNzdHp0c3Z4dXt6dXR1eXd4e3t7fHp1fJ1YNdBnPYhZSo5dU61c
+T4hkW5hnWJJqVKlpWLVpV7hzWbBoT4dpZpdsZ4h0bpd1a4J+e4V4dZZ6dotscad4aLh4Z614co1f
+YchqVsh1V9FvTMZ5Zcp1a8BeQ36AfXiDd4KCfoqFe5yLfrWGebSGdMqKdOWHZ31+gXR3hGdugYh9
+gn+AgoODhIuKhYWGiYeIiouLjIiHhJGOipWKhI6RjpOSjZmVjI2OkY+QkpOUlJualZWWmZeYmpuc
+nJiXlJeMkLWKhbiVi6Obl7aal6ePiZ6gnqSinauhmbmhmp2eoZ+goqOjpKusq6iop7iqp7S0s7q5
+uLGvrsiViNWVicicls+RjMijmdanl9KtlcSrp9m3qse7uM6zreS4ruSjmc7EuerIu8jIx9TSzdTU
+09zc3NnY1tXMx+jVyPjYyufb2PDRy9zi3Prm2e/q2uTk4+zs6+vo5vjr5+vz7PXz7f707P777Pv4
+5u39/O369/X19Pz29PT79fz79fX1+/32/PX8/f////nu9t/g5MC/wSH+EUNyZWF0ZWQgd2l0aCBH
+SU1QACH5BAEKAP0ALAAAAAB4AGYAAAj+APsJHEiwoMGDCBMqXMiwocOHECNKnEixosWLGBOq+5ax
+o8ePCsNx8oEhD8iTKC+GW5UiRQMNGvS4S0mzpkJvqVycOMGgAQSXumwKtRmvWxgVGjCAeMDgAYQH
+D0jgGkoVJDgwEBowWLpggYMFUJ1COFa1rEVvqFRAWLvgwAMHDqDGZXqCBTKzeB9+24OBxAOvJw44
+SOA1RNwITHu6+Je3McJuXjRA+OrgQIQQERAgUOD1a1ixKc45Ht2PGR0SC3wq+BqirQMFCA54jcA5
+hAKoDCDQWEca7zIyEMA+SMAAQQS4giO0Nfx1dQgQCwiTwPBlZu+hy4qcWAu1LQTacB3+DLDMWbZz
+B9+hZiXhhfd1mtlPNFiwdnLwB5cRDBAv+8CB/ayBFQJm6p3QxnsoBQNEAxgwwABh3AXHwGuvebUA
+AgsosFplC0QAXVgRNAUBIwh25M4xRUAgn1eELXVACMNBAMJzGT4Qgn//DRDBZIiFF5cDCDRwQisl
+XsQMECCc8FdWCzAAowMhKCkYCJUhQKECboV3WXgQ4LjagygYU+REpp0gAgi55dakf0D+FcEAELT2
+lo0wKkCgYA+AcICVD9wWGwQDgCBCM2M+hEsLK6QQIgRqMtDkA24J1lVXG/oHwox/iQCWA4gdd2FX
++nkYIgPLFKqQOrBoF1x6ECQQwZ7+D2h6AJUvxumhAjoi8ICVHToVAgKt2ZcAC2KcQGV3C6TQjakG
+raPHdi5hwNNTbp3glWyvDejAUhG8GteGCjwVl65wwfgAEaqoogVUhg33oAvgMCsQOHSgwFMJf5GQ
+AJR6lqeccRvCFZtsbR23bbdP/lpZAjeg4sWDEgS3gAGTRnACO6aG8wYJuTHKgAINGCBjjbIpZ3Br
+z+Up4IU9dueUXCHs4MMJdqS4wswaftVVBCIU4R6C4YCxQIPKgVUClhhoyG5sOiuHLa8vtoahZ5zG
+6cAKo5iCRxD07eHFKntwbNtcUFEABYL+eJFCVms5gMNSRytQgIYH4IoluSuEIIL+YXw/lRmUfT53
+4wMnqFIFAmuBMIAMerSwwIwtsHGA3xFIQIEdvZ3jhQspYFDZjz++CCSQz0E5wF/+DWjuZyB8Z6xT
+M+KwghDF8IDDFXmMokoRaOBxghCo1EIGWCpmNnQsjp1TxHwYvLxpl5d2hiN9xp4J1QEnoGzjrBLH
+uQKVKzjggyoPiDHKKGIwusIxJ5DByig3JACBFrWcggagPTXgCl7eNOEX7HmClI5gJADk2AZYq6kb
+hSzTIdjYCConQNil8CAHH6wGD6QIgcQSgAAZGOMpXUlAAryAihVE7GMLoAAENJCMqrBDDa1bUnDy
+9rkBDcCGT9pWluxUGeZYCFf+ULmU+EjhAC0UAxm0GIMDWCGHBIBgZnpghRDa0gK1OUAVdOiKC7wg
+BCEkQCsaYIZQuiEDFTFlUm/pz1f2RKs9PSlS+4nSAwawGhAo4Dgaah0OVEGLFEQnDqrwgSloMYpi
+yKFwozjcA1awh1nQgVEn0EMrRrE5EMTBC39hAAbCQRNm7KRVunLiX2wEJaelDjaRwlScBoesuSCm
+K7NihQ9kkwBrhWEVlynC+/QksQfUT0LiqSVhoCIEMtDyJ5wESTdokIICbIcBtVpLAjCDrScN4ELi
+WcqvPBQo/MwISl7hjAJWUAUhDKANxvSBF8DCgFmMgkMswM3kFjCLdTJABif++IoEonMCGWhiBRdi
+IA0+8g0XiIB5DCCB1QxAHKdcszNr9MpboDSXQBXQP5uZ6ALGpwor4CA1raADLVwAFsHgARVLuQ0p
+aJEMVCxvFV7AQy1WAELg2cEJXemT8Qxwgox8AwprGw59+qQAjjVgAEdtUEndMgA6ns4wHeqK1HQ2
+J/SIABVVaNI191OLUT5ACzdw0V/EQItAnaAYLiDB7hhAsdwoDjataWoaIUCBMFzkGAzCQKsY9ZoB
+JGAGXmiFHcIQBgP4RXBf2cyOZqSAMwGLNiLYT5Zw4AIIFMMLvAueKuwghDakQKReAME0fWAYHqwi
+OAlIQTFOUIQ9HFUIs2j+A2J0BZXTiUA8aznBDyyCih+wxTuTWwsnkiEMW9jiDmGYj2EGYKXKZAlK
+GOrRNZcigEuB4BYrKEIbTIHJAUiAFlWYBS7M+bEqkOEGpxvAKnYQKAjIYBUB0EMqUEGG4XxGTQMS
+DAT0o4GzTWQddWCFkrojP6eEQRiu8IUnZCGLVKhAPMYB0niONaA8xcYwViJDBd2ihVmczon/8aXj
+mAKVNoyCWuGzASoC8zhWLCUwbPnLpLgTQaYAyieqoMgb1KAH+UFzLQNwQSpk0YlOENkVsmiC/G50
+oxfBBi5wGoxbvDCKETYjF7RIURvy0BU8CEEMtyBDAubYlgGcFQ97wMP+KPIQAhyswgo+qMIqFuDd
+PEngQW7ZgQvGzK7TOcXHpZLIG+KABztwBVIYaIAPXJEKIxdZFxpAwKU8BB06K4dqCDBfEYZDgh3k
+gQRVuIUqcKEHAKihDDtw1APwwApRO2oFZAhBAA6wglNACgRiyOoCAgAX+UVAfhAIaYoSEFklATsB
+KjgBYyJCBzXQAQ9lmA8DEAOoFBQ3FZqwhQYIE5fWZWtWOxJqG3QRRLckgA65GM4JjnGLHUAgAF0J
+AANQMUci4ALDUCngLAzDlYGN5z83aIGifXGMMgSHZ2PT01IaEIRlQYQObShDG/CAz8ppaAAEmFgG
+tOIoKg2ubrHBjwD+RvgXXAyvDXMeABBQMYqXOVRF1gJBfSUQADKs4gAC+PIJyrCHpkYXAdXVVQhc
+MIpTJKUBDaAFLFYwtT4toF0DkMzPGqIGNchBDmOwAw7OA5fHGeZFi7RRl2B0aTpDQA1cBkEtVlEM
+MYAdBLTAQ4gdIIJjzEIMT6eFQxMQB014xQ1agJF/6JgAwQygJ1CAARA64QUYQ+AUX0A6lYxzAFdJ
+SANTX8ganN0GNzj7TTjSz+Tm2K3JWDeIIMBi4UGgC8J4gRY3Qs8bWEGCEOQtQ7kYA6QSoPKuBqcB
+rJDNfpQkMAXsq1XNTsUd7tCJWCBJfgUoQx7+YsenP0gsDVjDQ9T+EAY6yCHiZUBF6fMEuB52Zksz
+uoKMUEGHv6xiJwhw5w6ucIxRRDYuIvjPLPAAglPcIhcQQATFQAYqoAp5gCWjsyvjsYCaAQKogArC
+IAvMZwd+kXELoAtakB7BFACroiMw4BDIRQd70AZyAG0thyXBIQEIcGdDBSJPEVj+oVpkUASzMDkK
+MAu50AaFtx9zlE8O0AK0cAteMAACcAvRoQeogAZuASk4wlwLQxgPRQuu8AqyoAupYAcLUAAEQBgt
+IACQgh+VR2zJshZ2xRCcYAZnsAdvUArgVwb+0SRtsSRLkgBFQAfisQBJCIV6sHYpwAArkE8RdAMy
+gCUFxFij4Dv+EEACq+BQ15Q6soEAxPEUG9IqJ+ACDWALwtAKKCAMLjUAJPAiC0AEVeADIiRa1yRC
+E8MAasAQ3cAIvtAIo0AGYiAHZNAGQhAWjLIWAdAS+zQK7IYHLXACGDgAASABJ0AL6TMg0RMBJbQC
+qyEGqIAHAzBIWkB0Y+ZXetIWKAgEQBAcIeBXJxAGV0AHEUMHyzdvRXA6CyABeKAJoxBxejJmdkRH
+CiABDZALDDEMyuAIZ3AK34cHZIAHKTIfH/Z6udA8CXALo3ACmlAMqIALWVF5dxYcbxAWuEYLB3AD
+ejALNgAAnHECPrADAVAA0UFnHCIbBoALs6AFZSYEtyAGd6P+GXugBmszZm+oB5vQVCAgARTSGgmg
+IY6SAoSyENUgDY2QZm2QlG0QBw3wFQRAkmw1C7VgZiXACmHQFmRAC7SQWgfAABIgGLSQCz7HWrfA
+VBQCJ3RGGAYgAeNxPfthALOQCqkgBHyzI0kjGwyQAkTQKnAxRwNQBJogAxM2HrFhAIa1AgdAAEjn
+cAoxC2igBnOQB3uQBVzQBaYQAmPWFjOyAKQGJxAwCy6gMj24AnhwDFh1ALSgg5CCh3RgJRqCGXyW
+G3BiAMtjAAfQAGMWB6wQBKhAAxEjIzDSFQ0gAasRAJhJYhBAB3ZwAmuJBmjAQWBxKXREGxCgDgyh
+BmPwBnj+gAdtAAZpIAZqMBjHEighAAuoUAJBtgoy4BT0UQyqoBMnUAt+lAtF4EQp8ACsACS0sR8i
+dAASkAASIAAkgAaacJ8P4gAu4AoaEAZq4AW+xZNxER1+USPbEh2EUQZVoAIEEAa2cAI3dENMcymK
+yRDsYAZwMGhp0AZj4AVlgAejtAJzBCO1QAc0IEJAVgA00FX0sQC1sJ4QYAyjsGt5oAoBIGnkgook
+0IcJQASaoAuGZi1OlAtloAuMYAdKeAK4AgFA0Aq2EAbZE4dNdU0IsAdgAARIaCxeiHPtAgIUgAFA
+wBDhgAi8cAZq0Hlt4AWy+Dl/gR6wQAZ2wHsHIAam0FT+tIAKIXkMbfAAEtA6ecBSRVAcr2ElYegC
+ZIBJickABaAJVdAqcJIEdqAHKcAIX5AaATAAPpAKUAAEwtAJkDg9YfoATZAHmkACAhByk2EZ+cQA
+FAAEgaYQ20ANznAGcnAFcUAGxUoE5mZ4wpGIC7AHspQnuUAHtyACjaJQXQlVS4I4KkIGLlCqNpga
+eiBmdDY5FDBtTJIaYYAKGyABuvAKNLCCcuVc6CE/jchc/xEbINACDMACQVCGChEP2vAMkwAGbvAG
+ZFAFLUoEr7Ira4EBWoABBsAgyZAL93kCxkCOPNGCKjhKMsJTakMAPCYDaJAHP9AgDfAAbaB+O+oo
+JzD+BnsQBkCwlrGgC5wQBKngCuzlV5X3GgmgL4HDKSjDKywgAzQgA6jQEPAgDYiQBmzgBm0gBmKw
+ZW4nGJVHArmgB8/ZALUgBCemJKcwoU3SMRMiQOKRArXwMAxgCntQBrUAqvThXl6wqb+CAAxQBaxQ
+BDSgC2pQAANgs6j6BbpABK5BN6vxAPBGR/8RAl4IAkLwhy2gAkTSEOvwCGvABmQgi2JQBObjob8G
+IceQDLCQAqggBGWgCpB0H63SlSLkhQuwAyRwAi2gB6NKZwSgmHgQB+7mlTsQQcbxOF5gBxQwAHeg
+BjIwbbrQCgNgAMKgCwAAhbaBK9fUGgIgGyCwAjL+EFY3wAIqkAO28BDscAaP8AZWsAVt8AZjEAab
+wBlwcrJNEAxhUAu4oAsQ4AVBoEE6MjmPGAGRZlZlgAZhAAvIWwCJwxR2AAZfCCk0EATDqSvXJAF2
+QAe6kI4ugAzylQwpYBx09I0S8JXWAgESQAAQYAMi3AI2IAMsoGdD6RDgEAWpcAboJHFeAAZ0sCgB
+IAAKYG8FoAd6wCj3CyM/eYe76gPc0SRAsAlpIAPNQwJ3qgd3UEYfcwAsEJdQwJYYTK0aQAet0AIA
+WgRBoKixsRrEiCF0y7ItkAInsAJo3AIt4AIq4AIp7BDb8AuSEAZmgAdbQAZjkARj4B1dMgCokAf+
+MlB5TjErCVAAqgYCEWC0rCC4KaBQDdAETioG4YMAZYypuNkVMqcLwhAYG0wfYdCHM7oCInC4chWm
+HBQABCABKaATIsA5KOACKBCMSeIFjOkQ8ZANz8CPYrAFYnAFY1AGdiAW8rMAsvUXvPIXtfQ4FPAA
+LqAK3tnBXJEqPpADVdAauXECa/MU08YAaJAKLRAA2CwCdTALAIwCF4KNTSUeCgACKygCEOACSWJQ
+nKMCKrADfwiSQSAaEjENvLAEXiAHbuAGYsAFZQBQlJg4xxEVXwEBP0AHdcCtwRGxZeAF8xEdDnCn
+caI4s0bMWoBJswagCKAGe+DBTDcAahwx8Kr+IXckHgsIASywAixQFyfQxilAwitgAyXQAjLwA5nn
+EEm7BHBQggbLBlpABzB6H14CASQ5AHoABXtwBXVQC0VAMXNkB9OXUiowS6tJJ2/QCqeQAhu8NvCm
+B17AM2EqVY1YGfxZGSTAAjoR0yzAAmbcAiSgxi3wAyOQwEFQEe0gBWoQkGAABmJwuW9gLA7goYFC
+AvMKAi7QClCAGkFABzLQAEXFHolaN5UHFtF5HAdgAFygCUAAS5BIAYwwhG5RZv5BG7HnGcF4AhSw
+E9gc12e8AjcAAxzABIIQBDDwBRahDmYgBmBgB2LwBmVwBWIgd1RyG9cSHQMgAk0gCzQgI23+4Aoy
+YC4n0ARDwCIjAymEeId24HeF17t++KGtsye0ERiysQLJVsY7wd5nwgKyswIwUAGQYAiVUANmgBH+
+sATQsAQDfQXopAVcFhzOpSFekSRNoAlOkGh50Ab75CsUIFobPBy8toDfiD2rUF+z8hZU8lAo7UQJ
+EAAGoAEu0AI4MAIjwAIaMAItsHEjkAI9YAKz0wIcEAqDEAbxkhHKAA2SAAds8AYCLQZeIAZvsTe3
+EXQgMJxekAopYAB0oAX2aNHd8p8Q4xZ3cyO3EQFVsAO7QmcaAizDoY5dAgEq8NKIUgIrUAIpIAIr
+0AAmzgO76wI7sANHgATkABLYEA1/MAb+Qb4FVSDkN+QjkvJFwGcHUKAJaBCxlnMAVUAD1zQYDvI5
+lAEds0JTERoeGjShDkACLoDGIiDX01ECJWADK+ACtsMCHAAJTEADQPAF45AS07AIZxC1W0C+VVAF
+X4BzU4JHMOo5dpAKabCWDa0pLrAKP1DR4zphq7nh2BMral0Z/YLGMvCHpC4CKIACcc0COUADOUAF
+L/AHltAHg+AEHEET7QAMUVCLUXsFVaAFbYADnzNPIdACN5SFGacBecsJlxwEedDkBSAYDvDvffIa
+CoADb3Ecp6Mr9hECQnADaOwC047mKRDXOMADRPADPEAFHFAJfSAK5jAU7BAGc/AGdEz+BmDABcft
+Am5xW+MBJYRMkjerAsToXXSoBySQcWzpV0zzFmsRLnLyHOMkA4iCAzewA7JzAzdgAztA10LgAz2g
+AzsgA4MgCtNQFu0ABXXwCFkQw5XqyzeiJKK1hS9SeQ1ABpxAAw0w8YAiAWCQBxiQADKQqF9Jfacj
+AF+HHA5wA2cMu6WeAy0gBDtwAz7wAzIQA0cgBVDgAkVQA9bQDnghDksADFhwBlrgBldQBH++X8NR
+yHJ1AAqVAGrQCVCgCrUAKAHQAJrwqbqABmjyH9AEKeIhNQtgvSb+PWeMA0Zv6j1ABDrwAn4QCaHA
+AVeQ4wIRD2axDc4QCkjwnVcQ2FD++43nfEOzwhoSgAquAAUMhQClWgCzsGm8d1TY8ipsIgI4oMYr
+gAMlMAIigAEl8DsvoARDQAVU4AEcXwmSUMuOAQ3RcARpcMdQAAYAcUWMDwcREDhYUPDAgxAHIEDQ
+g2oBAxFCGgw4MCBBggEQIhyI8ADBAAciWqwYceJEChAsgJRYgYNEiR5CtPTIweSSIWvx+v0EGlTo
+UKJFjQ6FJiUMG1JtxLjBQobGAwcHFCw4APLAggUSVrAqg0pPmwENEizgiDHhAQcDHsRMgaFFihQn
+XIigUQIHjhMtaAAJ8+PHlGztfB5FnFjxUERrmpQZI+bKlSRhZChAcJWkgBAPMib+SIGmFQkSbSEU
+GBAgYVUFD27cwNECQwocd+uSmGHFCowjfiRVMKLE22LixRWDgUKZjBYtyL3IgNBwgAIBBxmg1Tjd
+AISzCx4U6AriBI4VVly44OtDL4oVNmzg0JHiiCFKmB4NN55fv9B0URop+YIL5rwY4goQqjpgJAUM
+2iiBjCAwy60BJlzghBUurIu8FliwwYoVWGChhx54aKEGPyo5JJv9VmTxG2J4QeIMMsqoYrI3GnJA
+gayoS0gBBxyMEKsEILhwhRLEwyGF81qwIQQWggtCBRZI2MCPZ+SRh0Ut9ePmGUmUwGKLN6rQYosr
+QshRgQEQQAArks5q4IEEGLD+0IUWLFyBhJjQS2GHFVKowYgllHhhAxWY2TLR/Z4JRYpSspjCiyrE
+8IKGAyRgSwCuHAhgABBGQmEBF1hYwQUUNBABgxJgoMBCHdCDwY9MLAllE3YUxTU/eaZZQg48zLjC
+Ci+08GIHg1ZbK4QICiJSJZUgIOEE92zQgbwedGjBAkIqqWScXL81Dh5E6OjCCzdq9MILMVbg6iPP
+3IIAhBXwBEHeeWfIYS8ZdMihCys0OCKSULIEt2DiwiDjiyqwSDfdK1iIYIGDWiNBJiPnxeG9HVpw
+QQcdYOBgiSFwUCEGYgxGmTh2pOhlCjPIoNSLIrw4YQEF6s3zQhBKgOmGC3f+uLaIDf445JMjiLgm
+ZaUXE8cZZ7B4ow11JZUBhBBWOGkF8bCuDT0fhCCChyopocSZYZZGWzFuQplEDDxi9oIIO7GOKSYa
+dsBBhh9uEGIHK54wwpBLnCE4bcONmgaUN8SA2wsf5j3B3hVu2EEGF3JIQoYhbsACCWrQOTz0o3wJ
+gxEynOCCC+SquHODF0Zg4YYhgOjgD1A8gAIKZETnvSh44KkD2CHIaOILKB6PVjwehKCCBkEqiUSR
+bnqn3qgv4Ijiii/irovnk3ZowgQjADFkmurPL+qVX5ZYwose/tQgBRiAIGKHGJD4pHD09/+pnF5e
+AVAPyGMBJjhCCTGwQiNJ2sE/BgalGsBYwhf8NIJAgOITSGCEOhq4QaD4Yg1R2NsLFDGJQCyQgyfs
+Ryq+QIMw1EARJkQhCpHhBVSsI4Y3xGEOdbhDHholIAA7
+}
+
 #####################################################################################
 # Tooltip
 #####################################################################################
@@ -1291,6 +1423,33 @@ proc launchBrowser url {
 wm title . "Brushless-Gimbal-Tool (for v$VERSION)"
 
 
+proc update_mpu {n1 n2 op} {
+	global reverseZ
+	global swapXY
+	.note.general.settings.sensor.img.canv delete "arrows"
+	if {$swapXY == 1} {
+		.note.general.settings.sensor.img.canv create line 100 50 67 13 -fill green -arrow last -tag arrows
+		.note.general.settings.sensor.img.canv create line 100 50 53 72 -fill red -arrow last -tag arrows
+		if {$reverseZ == 1} {
+			.note.general.settings.sensor.img.canv create line 100 50 100 100 -fill blue -arrow last -tag arrows
+		} else {
+			.note.general.settings.sensor.img.canv create line 100 50 100 5 -fill blue -arrow last -tag arrows
+		}
+	} else {
+		.note.general.settings.sensor.img.canv create line 18 38 60 15 -fill red -arrow last -tag arrows
+		.note.general.settings.sensor.img.canv create line 18 38 50 75 -fill green -arrow last -tag arrows
+		if {$reverseZ == 1} {
+			.note.general.settings.sensor.img.canv create line 18 38 18 100 -fill blue -arrow last -tag arrows
+		} else {
+			.note.general.settings.sensor.img.canv create line 18 38 18 5 -fill blue -arrow last -tag arrows
+		}
+	}
+}
+
+trace variable reverseZ w update_mpu
+trace variable swapXY w update_mpu
+
+
 ttk::notebook .note
 pack .note -fill both -expand yes -fill both -padx 2 -pady 3
 
@@ -1312,8 +1471,20 @@ pack .note -fill both -expand yes -fill both -padx 2 -pady 3
 		labelframe .note.general.settings.sensor -text "Sensor"
 		pack .note.general.settings.sensor -side left -expand yes -fill both
 
-			gui_check .note.general.settings.sensor.flip reverseZ "reverseZ" "reversed" "Set Sensor Orientation: Z" "Sensor - Orientation"
-			gui_check .note.general.settings.sensor.flop swapXY "swapXY" "swapped" "Set Sensor Orientation: XY" "Sensor - Orientation"
+
+			frame .note.general.settings.sensor.set
+			pack .note.general.settings.sensor.set -side left -expand yes -fill both
+
+				gui_check .note.general.settings.sensor.set.reverseZ reverseZ "reverseZ" "reversed" "Set Sensor Orientation: Z" "Sensor - Orientation"
+				gui_check .note.general.settings.sensor.set.swapXY swapXY "swapXY" "swapped" "Set Sensor Orientation: XY" "Sensor - Orientation"
+
+			frame .note.general.settings.sensor.img
+			pack .note.general.settings.sensor.img -side left -expand no -fill none
+
+				canvas .note.general.settings.sensor.img.canv -relief raised -width 120 -height 120
+				pack .note.general.settings.sensor.img.canv -side left
+				.note.general.settings.sensor.img.canv create image 0 0 -anchor nw -image sensor
+				update_mpu 0 0 0
 
 
 	labelframe .note.general.chart -text "Chart"
