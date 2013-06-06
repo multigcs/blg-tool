@@ -1299,33 +1299,54 @@ pack .note -fill both -expand yes -fill both -padx 2 -pady 3
 	ttk::frame .note.pitch
 	.note add .note.pitch -text "Pitch"
 
-		gui_slider .note.pitch.i gyroPitchKi 0 100 0.1 "Iacc" "Iacc-Value" "Iacc-Value"
-		gui_slider .note.pitch.p gyroPitchKp 0 100 0.1 "P" "P-Value" "adjust (increase) the P Term in 1.0 Steps stop when the movement is perfect if you go too far the motor will start to vibrate"
-		gui_slider .note.pitch.d gyroPitchKd 0 100 0.1 "D" "D-Value" "D-Value"
-		gui_radio .note.pitch.number motorNumberPitch "{ch1 1} {ch2 2}" "Number"  "Output-Port-Number" "if you find that the wrong motor is connected you can just change the 0 to the 1 and this will save unplugging your motors"
-		gui_check .note.pitch.dir   dirMotorPitch            "Dir"     "Reverse" "Motor-Direction" "this is for reversing your motor if it is rotating in the wrong direction"
-		gui_slider .note.pitch.maxpwm maxPWMmotorPitch 0 255 1 "max PWM" "maximum Motor-PWM" "minimize the MAX PWM Steps as much as possible this will also help to stop the vibration in the motor, when you have got NO vibration you are ready"
-#		gui_radio .note.pitch.rcChannelPitch rcChannelPitch "{ch1 0} {ch2 1} {ch3 2} {ch4 3} {ch5 4} {ch6 5} {ch7 6} {ch8 7}" "RC-Channel"  "rcChannelPitch" ""
-		gui_spin .note.pitch.rcChannelPitch rcChannelPitch 1 8 1   "RC-Channel"  "rcChannelPitch" "RC channel assignment for RC pitch, legal values are 0 to 7 in PPM mode"
-		gui_slider .note.pitch.rcmin  minRCPitch -90 90 1      "RC-Min"  "minimum Angle" "the amount or rotation your motor will make on that axis"
-		gui_slider .note.pitch.rcmax  maxRCPitch -90 90 1      "RC-Max"  "maximum Angle" "the amount or rotation your motor will make on that axis"
-		gui_slider .note.pitch.aop angleOffsetPitch -90 90 1 "angleOffsetPitch" "angleOffsetPitch" "angleOffsetPitch"
+		labelframe .note.pitch.pid -text "PID" -padx 10 -pady 10
+		pack .note.pitch.pid -side top -expand no -fill x
+
+			gui_slider .note.pitch.pid.p gyroPitchKp 0 100 0.1 "P" "P-Value" "adjust (increase) the P Term in 1.0 Steps stop when the movement is perfect if you go too far the motor will start to vibrate"
+			gui_slider .note.pitch.pid.d gyroPitchKd 0 100 0.1 "D" "D-Value" "D-Value"
+			gui_slider .note.pitch.pid.i gyroPitchKi 0 100 0.1 "Iacc" "Iacc-Value" "Iacc-Value"
+
+		labelframe .note.pitch.hw -text "Hardware" -padx 10 -pady 10
+		pack .note.pitch.hw -side top -expand no -fill x
+
+			gui_radio .note.pitch.hw.number motorNumberPitch "{ch1 1} {ch2 2}" "Port-Number"  "Output-Port-Number" "if you find that the wrong motor is connected you can just change the 0 to the 1 and this will save unplugging your motors"
+			gui_check .note.pitch.hw.dir   dirMotorPitch            "Direction"     "Reverse" "Motor-Direction" "this is for reversing your motor if it is rotating in the wrong direction"
+			gui_slider .note.pitch.hw.maxpwm maxPWMmotorPitch 0 255 1 "max PWM" "maximum Motor-PWM" "minimize the MAX PWM Steps as much as possible this will also help to stop the vibration in the motor, when you have got NO vibration you are ready"
+
+		labelframe .note.pitch.rc -text "RC" -padx 10 -pady 10
+		pack .note.pitch.rc -side top -expand no -fill x
+
+			gui_spin .note.pitch.rc.rcChannelPitch rcChannelPitch 1 8 1   "RC-Channel"  "rcChannelPitch" "RC channel assignment for RC pitch, legal values are 0 to 7 in PPM mode"
+			gui_slider .note.pitch.rc.rcmin  minRCPitch -90 90 1      "RC-Min"  "minimum Angle" "the amount or rotation your motor will make on that axis"
+			gui_slider .note.pitch.rc.rcmax  maxRCPitch -90 90 1      "RC-Max"  "maximum Angle" "the amount or rotation your motor will make on that axis"
+			gui_slider .note.pitch.rc.aop angleOffsetPitch -90 90 0.1 "angleOffsetPitch" "angleOffsetPitch" "angleOffsetPitch"
 
 
 
 	ttk::frame .note.roll
 	.note add .note.roll -text "Roll"
 
-		gui_slider .note.roll.i gyroRollKi 0 100 0.1 "Iacc" "Iacc-Value" "Iacc-Value"
-		gui_slider .note.roll.p gyroRollKp 0 100 0.1 "P" "P-Value" "adjust (increase) the P Term in 1.0 Steps stop when the movement is perfect if you go too far the motor will start to vibrate"
-		gui_slider .note.roll.d gyroRollKd 0 100 0.1 "D" "D-Value" "D-Value"
-		gui_radio .note.roll.number motorNumberRoll "{ch1 1} {ch2 2}" "Number"  "Output-Port-Number" "if you find that the wrong motor is connected you can just change the 0 to the 1 and this will save unplugging your motors"
-		gui_check .note.roll.dir   dirMotorRoll            "Dir"     "Reverse" "Motor-Direction" "this is for reversing your motor if it is rotating in the wrong direction"
-		gui_slider .note.roll.maxpwm maxPWMmotorRoll 0 255 1 "max PWM" "maximum Motor-PWM" "minimize the MAX PWM Steps as much as possible this will also help to stop the vibration in the motor, when you have got NO vibration you are ready"
-		gui_spin .note.roll.rcChannelRoll rcChannelRoll 1 8 1   "RC-Channel"  "rcChannelRoll" "RC channel assignment for RC roll, legal values are 0 to 7 in PPM mode"
-		gui_slider .note.roll.rcmin  minRCRoll -90 90 1      "RC-Min"  "minimum Angle" "the amount or rotation your motor will make on that axis"
-		gui_slider .note.roll.rcmax  maxRCRoll -90 90 1      "RC-Max"  "maximum Angle" "the amount or rotation your motor will make on that axis"
-		gui_slider .note.roll.aop angleOffsetRoll -90 90 1 "angleOffsetRoll" "angleOffsetRoll" "angleOffsetRoll"
+		labelframe .note.roll.pid -text "PID" -padx 10 -pady 10
+		pack .note.roll.pid -side top -expand no -fill x
+
+			gui_slider .note.roll.pid.p gyroRollKp 0 100 0.1 "P" "P-Value" "adjust (increase) the P Term in 1.0 Steps stop when the movement is perfect if you go too far the motor will start to vibrate"
+			gui_slider .note.roll.pid.d gyroRollKd 0 100 0.1 "D" "D-Value" "D-Value"
+			gui_slider .note.roll.pid.i gyroRollKi 0 100 0.1 "Iacc" "Iacc-Value" "Iacc-Value"
+
+		labelframe .note.roll.hw -text "Hardware" -padx 10 -pady 10
+		pack .note.roll.hw -side top -expand no -fill x
+
+			gui_radio .note.roll.hw.number motorNumberRoll "{ch1 1} {ch2 2}" "Port-Number"  "Output-Port-Number" "if you find that the wrong motor is connected you can just change the 0 to the 1 and this will save unplugging your motors"
+			gui_check .note.roll.hw.dir   dirMotorRoll            "Direction"     "Reverse" "Motor-Direction" "this is for reversing your motor if it is rotating in the wrong direction"
+			gui_slider .note.roll.hw.maxpwm maxPWMmotorRoll 0 255 1 "max PWM" "maximum Motor-PWM" "minimize the MAX PWM Steps as much as possible this will also help to stop the vibration in the motor, when you have got NO vibration you are ready"
+
+		labelframe .note.roll.rc -text "RC" -padx 10 -pady 10
+		pack .note.roll.rc -side top -expand no -fill x
+
+			gui_spin .note.roll.rc.rcChannelRoll rcChannelRoll 1 8 1   "RC-Channel"  "rcChannelRoll" "RC channel assignment for RC roll, legal values are 0 to 7 in PPM mode"
+			gui_slider .note.roll.rc.rcmin  minRCRoll -90 90 1      "RC-Min"  "minimum Angle" "the amount or rotation your motor will make on that axis"
+			gui_slider .note.roll.rc.rcmax  maxRCRoll -90 90 1      "RC-Max"  "maximum Angle" "the amount or rotation your motor will make on that axis"
+			gui_slider .note.roll.rc.aop angleOffsetRoll -90 90 0.1 "angleOffsetRoll" "angleOffsetRoll" "angleOffsetRoll"
 
 
 
