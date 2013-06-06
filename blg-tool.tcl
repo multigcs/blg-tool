@@ -8,7 +8,7 @@
 # any later version. see <http://www.gnu.org/licenses/>
 # 
 
-set VERSION 48
+set VERSION 49
 
 #####################################################################################
 # Big hexdata
@@ -201,7 +201,7 @@ Ryq+QIMw1EARJkQhCpHhBVSsI4Y3xGEOdbhDHholIAA7
 proc setTooltip {widget text} {
 	if { $text != "" } {
 
-		bind $widget <Any-Enter>    [list .bottom.info configure -text "$text"]
+		bind $widget <Any-Enter>    [list .helptext configure -text "$text"]
 
 #		bind $widget <Any-Enter>    [list after 500 [list showTooltip %W $text]]
 #		bind $widget <Any-Leave>    [list after 500 [list destroy %W.tooltip]]
@@ -272,7 +272,7 @@ menu .menu.options -tearoff 0
 		set_defaults
 	}
 	.menu.options add command -label "Load from Board" -command {
-		send_tc
+		send_par
 	}
 	.menu.options add command -label "Save to Board" -command {
 		save_values
@@ -367,26 +367,77 @@ if {[string match "*Linux*" $tcl_platform(os)]} {
 set Serial 0
 set LastValX 0
 set LastValY 0
-set gyroPitchKp 0.0
-set gyroPitchKi 0.0
-set gyroPitchKd 0.0
-set motorPitchMaxpwm 0
-set motorPitchNumber 0
-set motorPitchDir 0
-set gyroRollKp 0.0
-set gyroRollKi 0.0
-set gyroRollKd 0.0
-set motorRollMaxpwm 0
-set motorRollNumber 1
-set motorRollDir 0
-set accelWeight 0.0
-set motorUpdateFreq 0
-set rcGain 0.0
-set reverseZ 0
-set swapXY 0
+set chart 0
+
+set par(gyroPitchKp,scale) 1000.0
+set par(gyroPitchKi,scale) 1000.0
+set par(gyroPitchKd,scale) 1000.0
+set par(gyroRollKp,scale) 1000.0
+set par(gyroRollKi,scale) 1000.0
+set par(gyroRollKd,scale) 1000.0
+set par(accTimeConstant,scale) 1
+set par(mpuLPF,scale) 1
+set par(angleOffsetPitch,scale) 1
+set par(angleOffsetRoll,scale) 1
+set par(dirMotorPitch,scale) 1
+set par(dirMotorRoll,scale) 1
+set par(motorNumberPitch,scale) 1
+set par(motorNumberRoll,scale) 1
+set par(maxPWMmotorPitch,scale) 1
+set par(maxPWMmotorRoll,scale) 1
+set par(minRCPitch,scale) 1
+set par(maxRCPitch,scale) 1
+set par(minRCRoll,scale) 1
+set par(maxRCRoll,scale) 1
+set par(rcGain,scale) 1
+set par(rcLPF,scale) 1
+set par(rcModePPM,scale) 1
+set par(rcChannelPitch,scale) 1
+set par(rcChannelRoll,scale) 1
+set par(rcMid,scale) 1
+set par(rcAbsolute,scale) 1
+set par(accOutput,scale) 1
+set par(enableGyro,scale) 1
+set par(enableACC,scale) 1
+set par(axisReverseZ,scale) 1
+set par(axisSwapXY,scale) 1
+
+set par(gyroPitchKp) 0
+set par(gyroPitchKi) 0
+set par(gyroPitchKd) 0
+set par(gyroRollKp) 0
+set par(gyroRollKi) 0
+set par(gyroRollKd) 0
+set par(accTimeConstant) 0
+set par(mpuLPF) 0
+set par(angleOffsetPitch) 0
+set par(angleOffsetRoll) 0
+set par(dirMotorPitch) 0
+set par(dirMotorRoll) 0
+set par(motorNumberPitch) 0
+set par(motorNumberRoll) 0
+set par(maxPWMmotorPitch) 0
+set par(maxPWMmotorRoll) 0
+set par(minRCPitch) 0
+set par(maxRCPitch) 0
+set par(minRCRoll) 0
+set par(maxRCRoll) 0
+set par(rcGain) 0
+set par(rcLPF) 0
+set par(rcModePPM) 0
+set par(rcChannelPitch) 0
+set par(rcChannelRoll) 0
+set par(rcMid) 0
+set par(rcAbsolute) 0
+set par(accOutput) 0
+set par(enableGyro) 0
+set par(enableACC) 0
+set par(axisReverseZ) 0
+set par(axisSwapXY) 0
+
+
 set CHART_SCALE 0.5
 set buffer ""
-set mode "OAC"
 set count 0
 set chart_count 0
 
@@ -406,13 +457,11 @@ proc Serial_Init {ComPort ComRate} {
 		.bottom.version configure -text "Serial-Ok: $ComPort @ $ComRate"
 		.bottom.info configure -text "Serial-Ok: $ComPort @ $ComRate"
 		.device.connect configure -text "Reconnect"
-		enable_all .device.close
 	}]} {
 		.bottom.version configure -text "Serial-Error: $ComPort @ $ComRate"
 		.bottom.version configure -background red
 		.bottom.info configure -text "Serial-Error: $ComPort @ $ComRate"
 		.device.connect configure -text "Connect"
-		disable_all .device.close
 		return 0
 	}
 	return $iChannel
@@ -422,13 +471,6 @@ proc close_serial {} {
 	global Serial
 	catch {close $Serial}
 	.device.connect configure -text "Connect"
-
-	disable_all .note
-	disable_all .buttons
-	disable_all .buttons_ext
-	disable_all .device.close
-	enable_all .note.general.image
-
 }
 
 #####################################################################################
@@ -437,189 +479,93 @@ proc close_serial {} {
 
 proc connect_serial {} {
 	global Serial
-	global mode
 	global count
 	global device
 	global buffer
-	.bottom.info configure -background yellow
+#	.bottom.info configure -background yellow
 	set device [.device.spin get]
 	set Serial [Serial_Init $device 115200]
-	set mode "OAC"
 	set count 0
 	if {$Serial == 0} {
 		.bottom.info configure -background red
 		.bottom.info configure -text "not connected"
-		set mode ""
 		return
+	} else {
+		.bottom.info configure -background green
+		.bottom.info configure -text "connected"
 	}
-	after 100 send_tc
-}
-
-proc send_tc {} {
-	global Serial
-	global mode
-	global count
-	global device
-	global buffer
-	set count 0
-	set buffer ""
-	.bottom.info configure -background yellow
-	if {$Serial == 0} {
-		.bottom.info configure -background red
-		.bottom.info configure -text "not connected"
-		set mode ""
-		return
-	}
-	if {$mode == "OAC" || $mode == "ODM"} {
-	      	puts -nonewline $Serial "ODM 0\n"
-		flush $Serial
-	      	puts -nonewline $Serial "OAC 0\n"
-		flush $Serial
-		after 1500
-		set NULL [read $Serial 10000]
-		flush $Serial
-		set NULL [read $Serial 10000]
-		flush $Serial
-		set NULL [read $Serial 10000]
-		flush $Serial
-		set buffer ""
-		.note.general.chart.fr1.button configure -relief raised
-		.note.general.chart.fr1.button configure -text "Start"
-	}
-	.bottom.info configure -text "TC: reading values..."
-	set mode "TC"
-        puts -nonewline $Serial "TC\n"
-	flush $Serial
-}
-
-proc send_trc {} {
-	global Serial
-	global mode
-	global count
-	global device
-	set mode "TRC"
-	set count 0
-	set buffer ""
-	if {$Serial == 0} {
-		.bottom.info configure -background red
-		.bottom.info configure -text "not connected"
-		set mode ""
-		return
-	}
-	.bottom.info configure -text "TRC: reading values..."
-        puts -nonewline $Serial "TRC\n"
-	flush $Serial
-}
-
-proc send_tca {} {
-	global Serial
-	global mode
-	global count
-	global device
-	set mode "TCA"
-	set count 0
-	set buffer ""
-	if {$Serial == 0} {
-		.bottom.info configure -background red
-		.bottom.info configure -text "not connected"
-		set mode ""
-		return
-	}
-	.bottom.info configure -text "TCA: reading values..."
-        puts -nonewline $Serial "TCA\n"
-	flush $Serial
-}
-
-proc send_trg {} {
-	global Serial
-	global mode
-	global count
-	global device
-	set mode "TRG"
-	set count 0
-	set buffer ""
-	if {$Serial == 0} {
-		.bottom.info configure -background red
-		.bottom.info configure -text "not connected"
-		set mode ""
-		return
-	}
-	.bottom.info configure -text "TRG: reading values..."
-        puts -nonewline $Serial "TRG\n"
-	flush $Serial
+	after 6000 send_par
 }
 
 proc draw_chart {} {
 	global Serial
-	global mode
+	global chart
+	if {$Serial == 0} {
+		.bottom.info configure -background red
+		.bottom.info configure -text "not connected"
+		return
+	}
+	if {$chart == 1} {
+		set chart 0
+		.bottom.info configure -text "SEND: oac 0"
+        	puts -nonewline $Serial "oac 0\n"
+		flush $Serial
+	} else {
+		set chart 1
+		.bottom.info configure -text "SEND: oac 1"
+        	puts -nonewline $Serial "oac 1\n"
+		flush $Serial
+	}
+}
+
+proc send_parvar {n1 n2 op} {
+	global Serial
+	global par
+	if {$Serial == 0} {
+		.bottom.info configure -background red
+		.bottom.info configure -text "not connected"
+		return
+	}
+	if {$n2 == "vers"} {
+	} elseif {$n2 == "dirMotorPitch" || $n2 == "dirMotorRoll"} {
+		if {$par($n2) == 1} {
+			.bottom.info configure -text "SEND: par $n2 -1"
+		        puts -nonewline $Serial "par $n2 -1\n"
+		} else {
+			.bottom.info configure -text "SEND: par $n2 1"
+		        puts -nonewline $Serial "par $n2 1\n"
+		}
+	} else {
+		.bottom.info configure -text "SEND: par $n2 [expr $par($n2) * $par($n2,scale)]"
+	        puts -nonewline $Serial "par $n2 [expr $par($n2) * $par($n2,scale)]\n"
+	}
+	flush $Serial
+	after 20
+}
+
+proc send_par {} {
+	global Serial
 	global count
 	global device
+	global buffer
 	set count 0
 	set buffer ""
 	if {$Serial == 0} {
 		.bottom.info configure -background red
 		.bottom.info configure -text "not connected"
-		set mode ""
 		return
 	}
+	.bottom.info configure -text "PAR: reading values..."
+
+        puts -nonewline $Serial "par\n"
 	flush $Serial
-	if {$mode == "ODM" || $mode == "OAC"} {
-        	puts -nonewline $Serial "ODM 0\n"
-		flush $Serial
-        	puts -nonewline $Serial "OAC 0\n"
-		flush $Serial
-		set mode ""
-		.note.general.chart.fr1.button configure -relief raised
-		.note.general.chart.fr1.button configure -text "Start"
-		.bottom.info configure -text "stopping stream"
-		.bottom.info configure -background green
-		enable_all .buttons
-		enable_all .buttons_ext
-		enable_all .note
-		update
-	} else {
-		set mode "OAC"
-	        puts -nonewline $Serial "OAC 1\n"
-		flush $Serial
-		.note.general.chart.fr1.button configure -relief sunken
-		.note.general.chart.fr1.button configure -text "Stop"
-		.bottom.info configure -text "starting stream"
-		.bottom.info configure -background yellow
-		disable_all .buttons
-		disable_all .buttons_ext
-		enable_all .note
-		update
-	}
 }
 
 proc save_values {} {
 	global Serial
-	global mode
 	global count
 	global device
-	global gyroPitchKp
-	global gyroPitchKi
-	global gyroPitchKd
-	global motorPitchMaxpwm
-	global motorPitchNumber
-	global motorPitchDir
-	global rcPitchMin
-	global rcPitchMax
-	global gyroRollKp
-	global gyroRollKi
-	global gyroRollKd
-	global motorRollMaxpwm
-	global motorRollNumber
-	global motorRollDir
-	global rcRollMin
-	global rcRollMax
-	global accelWeight
-	global motorUpdateFreq
-	global rcAbsolute
-	global rcGain
-	global reverseZ
-	global swapXY
-
+	global par
 	.bottom.info configure -text "saving values"
 	.bottom.info configure -background yellow
 	update
@@ -628,43 +574,15 @@ proc save_values {} {
 		.bottom.info configure -text "not connected"
 		return
 	}
-        puts -nonewline $Serial "SP [expr $gyroPitchKp * 1000.0] [expr $gyroPitchKi * 1000.0] [expr $gyroPitchKd * 1000.0]\n"
-	flush $Serial
-	after 100
-        puts -nonewline $Serial "SR [expr $gyroRollKp * 1000.0] [expr $gyroRollKi * 1000.0] [expr $gyroRollKd * 1000.0]\n"
-	flush $Serial
-	after 100
-        puts -nonewline $Serial "SA [expr $accelWeight * 10000.0]\n"
-	flush $Serial
-	after 100
-        puts -nonewline $Serial "SE $motorPitchMaxpwm $motorRollMaxpwm\n"
-	flush $Serial
-	after 100
-	if {$motorPitchDir == 0} {
-		set motorPitchDir2 -1
-	} else {
-		set motorPitchDir2 1
+	foreach var [array names par] {
+		if {$var == "vers"} {
+		} elseif {! [string match "*,*" $var]} {
+			send_parvar "par" $var "w"
+			after 20
+		}
 	}
-	if {$motorRollDir == 0} {
-		set motorRollDir2 -1
-	} else {
-		set motorRollDir2 1
-	}
-        puts -nonewline $Serial "SM $motorPitchDir2 $motorRollDir2 $motorPitchNumber $motorRollNumber\n"
-	flush $Serial
-	after 100
-        puts -nonewline $Serial "SRC $rcPitchMin $rcPitchMax $rcRollMin $rcRollMax\n"
-	flush $Serial
-	after 100
-        puts -nonewline $Serial "SCA $rcAbsolute\n"
-	flush $Serial
-	after 100
-        puts -nonewline $Serial "SRG $rcGain\n"
-	flush $Serial
-	after 100
-        puts -nonewline $Serial "SSO $reverseZ $swapXY\n"
-	flush $Serial
-	after 100 send_tc
+	.bottom.info configure -text "saving values done"
+	.bottom.info configure -background green
 }
 
 proc load_values_from_file {} {
@@ -688,7 +606,7 @@ proc load_values_from_file {} {
 				if {$line != ""} {
 				        puts $Serial "$line"
 					flush $Serial
-					after 100
+					after 20
 				}
 			}
 			.bottom.info configure -text "load: done"
@@ -699,36 +617,13 @@ proc load_values_from_file {} {
 			update
 		}
 	}
-	after 100 send_tc
+	after 200 send_par
 }
 
 proc save_values2file {} {
 	global Serial
-	global mode
-	global count
 	global device
-	global gyroPitchKp
-	global gyroPitchKi
-	global gyroPitchKd
-	global motorPitchMaxpwm
-	global motorPitchNumber
-	global motorPitchDir
-	global rcPitchMin
-	global rcPitchMax
-	global gyroRollKp
-	global gyroRollKi
-	global gyroRollKd
-	global motorRollMaxpwm
-	global motorRollNumber
-	global motorRollDir
-	global rcRollMin
-	global rcRollMax
-	global accelWeight
-	global motorUpdateFreq
-	global rcAbsolute
-	global rcGain
-	global reverseZ
-	global swapXY
+	global par
 	set types {
 		{"Text files"		{.txt}	}
 		{"Text files"		{}		TEXT}
@@ -737,35 +632,28 @@ proc save_values2file {} {
 	set file [tk_getSaveFile -filetypes $types -parent . -initialfile bl-gimbal -defaultextension .txt]
 	if {$file != ""} {
 		set fp [open $file w]
-	        puts -nonewline $fp "SP [expr $gyroPitchKp * 1000.0] [expr $gyroPitchKi * 1000.0] [expr $gyroPitchKd * 1000.0]\n"
-	        puts -nonewline $fp "SR [expr $gyroRollKp * 1000.0] [expr $gyroRollKi * 1000.0] [expr $gyroRollKd * 1000.0]\n"
-	        puts -nonewline $fp "SA [expr $accelWeight * 10000.0]\n"
-	        puts -nonewline $fp "SE $motorPitchMaxpwm $motorRollMaxpwm\n"
-		if {$motorPitchDir == 0} {
-			set motorPitchDir2 -1
-		} else {
-			set motorPitchDir2 1
+		foreach var [array names par] {
+			if {$var == "vers"} {
+			} elseif {! [string match "*,*" $var]} {
+				if {$var == "dirMotorPitch" || $var == "dirMotorRoll"} {
+					if {$par($var) == 1} {
+					        puts -nonewline $fp "par $var -1\n"
+					} else {
+					        puts -nonewline $fp "par $var 1\n"
+					}
+				} else {
+				        puts -nonewline $fp "par $var [expr $par($var) * $par($var,scale)]\n"
+				}
+			}
 		}
-		if {$motorRollDir == 0} {
-			set motorRollDir2 -1
-		} else {
-			set motorRollDir2 1
-		}
-	        puts -nonewline $fp "SM $motorPitchDir2 $motorRollDir2 $motorPitchNumber $motorRollNumber\n"
-	        puts -nonewline $fp "SRC $rcPitchMin $rcPitchMax $rcRollMin $rcRollMax\n"
-	        puts -nonewline $fp "SCA $rcAbsolute\n"
-	        puts -nonewline $fp "SRG $rcGain\n"
-	        puts -nonewline $fp "SSO $reverseZ $swapXY\n"
 		close $fp
 	}
 }
 
 proc gyro_cal {} {
 	global Serial
-	global mode
 	global count
 	global device
-	set mode ""
 	set count 0
 	if {$Serial == 0} {
 		.bottom.info configure -background red
@@ -781,10 +669,8 @@ proc gyro_cal {} {
 
 proc save_to_flash {} {
 	global Serial
-	global mode
 	global count
 	global device
-	set mode ""
 	set count 0
 	if {$Serial == 0} {
 		.bottom.info configure -background red
@@ -797,13 +683,10 @@ proc save_to_flash {} {
 
 proc load_from_flash {} {
 	global Serial
-	global mode
 	global count
 	global device
-	set mode ""
 	set count 0
 	.bottom.info configure -text "loading from flash"
-	.bottom.info configure -background yellow
 	update
 	if {$Serial == 0} {
 		.bottom.info configure -background red
@@ -812,18 +695,15 @@ proc load_from_flash {} {
 	}
         puts -nonewline $Serial "RE\n"
 	flush $Serial
-	after 200 send_tc
+	after 200 send_par
 }
 
 proc set_defaults {} {
 	global Serial
-	global mode
 	global count
 	global device
-	set mode ""
 	set count 0
 	.bottom.info configure -text "setting defaults"
-	.bottom.info configure -background yellow
 	update
 	if {$Serial == 0} {
 		.bottom.info configure -background red
@@ -832,7 +712,7 @@ proc set_defaults {} {
 	}
         puts -nonewline $Serial "SD\n"
 	flush $Serial
-	after 200 send_tc
+	after 200 send_par
 }
 
 #####################################################################################
@@ -841,197 +721,84 @@ proc set_defaults {} {
 
 proc rd_chid {chid} {
 	global buffer
-	global mode
 	global count
 	global chart_count
-	global gyroPitchKp
-	global gyroPitchKi
-	global gyroPitchKd
-	global motorPitchMaxpwm
-	global motorPitchNumber
-	global motorPitchDir
-	global rcPitchMin
-	global rcPitchMax
-	global gyroRollKp
-	global gyroRollKi
-	global gyroRollKd
-	global motorRollMaxpwm
-	global motorRollNumber
-	global motorRollDir
-	global rcRollMin
-	global rcRollMax
-	global accelWeight
-	global motorUpdateFreq
-	global rcAbsolute
 	global VERSION
-	global rcGain
-	global reverseZ
-	global swapXY
+	global par
 	if {$chid == 0} {
 		return
 	}
-	catch {
+#	catch {
 		set ch [read $chid 1]
-		if {$ch == "\n"} {
-			if {$mode == "TC"} {
-				if {[string match "*GO!*" $buffer] || [string match "*MPU6050*" $buffer]} {
-					set buffer ""
-					return
-				}
-				.bottom.info configure -text "TC: reading values...([expr $count + 1]/16): $buffer"
-				if {[string is integer -strict $buffer]} {
-					if {$count == 0} {
-						if {$buffer == $VERSION} {
-							.bottom.version configure -text "Firmware-Version: $buffer"
-							.bottom.version configure -background lightgray
-						} else {
-							.bottom.version configure -text "Firmware-Version: $buffer (wrong Version)"
-							.bottom.version configure -background red
-						}
-					} elseif {$count == 1} {
-						set gyroPitchKp [expr $buffer / 1000.0]
-					} elseif {$count == 2} {
-						set gyroPitchKi [expr $buffer / 1000.0]
-					} elseif {$count == 3} {
-						set gyroPitchKd [expr $buffer / 1000.0]
-					} elseif {$count == 4} {
-						set gyroRollKp [expr $buffer / 1000.0]
-					} elseif {$count == 5} {
-						set gyroRollKi [expr $buffer / 1000.0]
-					} elseif {$count == 6} {
-						set gyroRollKd [expr $buffer / 1000.0]
-					} elseif {$count == 7} {
-						set accelWeight [expr $buffer / 10000.0]
-					} elseif {$count == 10} {
-						if {$buffer == -1} {
-							set motorPitchDir 0
-						} else {
-							set motorPitchDir 1
-						}
-					} elseif {$count == 11} {
-						if {$buffer == -1} {
-							set motorRollDir 0
-						} else {
-							set motorRollDir 1
-						}
-					} elseif {$count == 12} {
-						set motorPitchNumber $buffer
-					} elseif {$count == 13} {
-						set motorRollNumber $buffer
-					} elseif {$count == 14} {
-						set motorPitchMaxpwm $buffer
-					} elseif {$count == 15} {
-						set motorRollMaxpwm $buffer
-						.bottom.info configure -text "TC: reading values...done"
-						after 100 send_trc
-					} 
-					incr count 1
-				} else {
-					set mode ""
-					set count 0
-					.bottom.info configure -text "TC: error reading integer ($count): $buffer"
-					.bottom.info configure -background red
-				}
-			} elseif {$mode == "TRC"} {
-				.bottom.info configure -text "TRC: reading values...([expr $count + 1]/4): $buffer"
-				if {[string is integer -strict $buffer]} {
-					if {$count == 0} {
-						set rcPitchMin $buffer
-					} elseif {$count == 1} {
-						set rcPitchMax $buffer
-					} elseif {$count == 2} {
-						set rcRollMin $buffer
-					} elseif {$count == 3} {
-						set rcRollMax $buffer
-						.bottom.info configure -text "TRC: reading values...done"
-						after 100 send_tca
-					}
-					incr count 1
-				} else {
-					set mode ""
-					set count 0
-					.bottom.info configure -text "TRC: error reading integer ($count): $buffer"
-					.bottom.info configure -background red
-				}
-			} elseif {$mode == "TCA"} {
-				.bottom.info configure -text "TCA: reading values...([expr $count + 1]/1): $buffer"
-				if {[string is integer -strict $buffer]} {
-					if {$count == 0} {
-						set rcAbsolute $buffer
-						.bottom.info configure -text "TCA: reading values...done"
-						.bottom.info configure -background green
-						.bottom.info configure -text "reading done"
-						enable_all .note
-						enable_all .buttons
-						enable_all .buttons_ext
-						after 100 send_trg
-					}
-					incr count 1
-				} else {
-					set mode ""
-					set count 0
-					.bottom.info configure -text "TCA: error reading integer ($count): $buffer"
-					.bottom.info configure -background red
-				}
-			} elseif {$mode == "TRG"} {
-				.bottom.info configure -text "TRG: reading values...([expr $count + 1]/1): $buffer"
-				if {[string is integer -strict $buffer]} {
-					if {$count == 0} {
-						set rcGain $buffer
-						.bottom.info configure -text "TRG: reading values...done"
-						.bottom.info configure -background green
-						.bottom.info configure -text "reading done"
-						enable_all .note
-						enable_all .buttons
-						enable_all .buttons_ext
-					}
-					incr count 1
-				} else {
-					set mode ""
-					set count 0
-					.bottom.info configure -text "Error reading integer ($count): $buffer"
-					.bottom.info configure -background red}
-			} elseif {$mode == "OAC" || $mode == "ODM"} {
-				.bottom.info configure -text "OAC: $buffer"
-				global LastValX
-				global LastValY
-				global CHART_SCALE
-				set ValX [lindex $buffer 0]
-				set TEST [lindex $buffer 1]
-				set ValY [lindex $buffer 2]
-				if {($TEST == "ACC" || $TEST == "DMP") && [string is double -strict $ValX] && [string is double -strict $ValY]} {
-					incr chart_count 1
-					if {$chart_count >= 450} {
-						set chart_count 0
-					}
-					.note.general.chart.chart1 delete "line_$chart_count"
-					.note.general.chart.chart1 create line $chart_count [expr 100 - ($LastValX / 2 * $CHART_SCALE + 50)] [expr $chart_count + 1] [expr 100 - ($ValX * $CHART_SCALE / 2 + 50)] -fill orange -tags "line_$chart_count"
-					.note.general.chart.chart1 create line $chart_count [expr 100 - ($LastValY / 2 * $CHART_SCALE + 50)] [expr $chart_count + 1] [expr 100 - ($ValY * $CHART_SCALE / 2 + 50)] -fill green -tags "line_$chart_count"
-					.note.general.chart.chart1 delete "pos"
-					.note.general.chart.chart1 create line [expr $chart_count + 1] 0 [expr $chart_count + 1] 100 -fill yellow -tags "pos"
-					.note.general.chart.chart1 create text 5 10 -text "Pitch: $ValX" -anchor w -fill orange -tags "pos"
-					.note.general.chart.chart1 create text 5 25 -text "Roll:  $ValY" -anchor w -fill green -tags "pos"
-					set LastValX $ValX
-					set LastValY $ValY
-				}
-			} else {
+		if {$ch == "\r"} {
+		} elseif {$ch == "\n"} {
+			if {1 == 1} {
 				.bottom.info configure -text "INFO: $buffer"
-				if {[string match "*recalibration: done*" $buffer]} {
+
+				set var [lindex $buffer 0]
+				set val [lindex $buffer 1]
+
+				if {$var == "vers"} {
+					set par(vers) "$val"
+#					if {$par(vers) == $VERSION} {
+						.bottom.version configure -text "Firmware-Version: $par(vers)"
+						.bottom.version configure -background lightgray
+#					} else {
+#						.bottom.version configure -text "Firmware-Version: $par(vers) (wrong Version)"
+#						.bottom.version configure -background red
+#					}
+				} elseif {$var == "dirMotorPitch" || $var == "dirMotorRoll"} {
+					if {$val == -1} {
+						set par($var) 1
+					} else {
+						set par($var) 0
+					}
+
+				} elseif {[info exists par($var,scale)]} {
+					set par($var) [expr $val / $par($var,scale)]
+				} elseif {[string match "* ACC *" $buffer]} {
+					set chart 1
+					.bottom.info configure -text "OAC: $buffer"
+					global LastValX
+					global LastValY
+					global CHART_SCALE
+					set ValX [lindex $buffer 0]
+					set TEST [lindex $buffer 1]
+					set ValY [lindex $buffer 2]
+					if {($TEST == "ACC" || $TEST == "DMP") && [string is double -strict $ValX] && [string is double -strict $ValY]} {
+						incr chart_count 1
+						if {$chart_count >= 450} {
+							set chart_count 0
+						}
+						.note.general.chart.chart1 delete "line_$chart_count"
+						.note.general.chart.chart1 create line $chart_count [expr 100 - ($LastValX / 2 * $CHART_SCALE + 50)] [expr $chart_count + 1] [expr 100 - ($ValX * $CHART_SCALE / 2 + 50)] -fill orange -tags "line_$chart_count"
+						.note.general.chart.chart1 create line $chart_count [expr 100 - ($LastValY / 2 * $CHART_SCALE + 50)] [expr $chart_count + 1] [expr 100 - ($ValY * $CHART_SCALE / 2 + 50)] -fill green -tags "line_$chart_count"
+						.note.general.chart.chart1 delete "pos"
+						.note.general.chart.chart1 create line [expr $chart_count + 1] 0 [expr $chart_count + 1] 100 -fill yellow -tags "pos"
+						.note.general.chart.chart1 create text 5 10 -text "Pitch: $ValX" -anchor w -fill orange -tags "pos"
+						.note.general.chart.chart1 create text 5 25 -text "Roll:  $ValY" -anchor w -fill green -tags "pos"
+						.note.general.chart.chart1 create text 5 90 -text "Scale:  $CHART_SCALE" -anchor w -fill green -tags "pos"
+						set LastValX $ValX
+						set LastValY $ValY
+					}
+
+				} elseif {[string match "*recalibration: done*" $buffer]} {
+
 					#tk_messageBox -icon info -message "Gyro-Recalibration done" -type ok -parent .
 					.bottom.info configure -text "Gyro-Recalibration done"
 					.bottom.info configure -background green
 					update
-				} elseif {[string match "*GO!*" $buffer]} {
+				} elseif {[string match "* ddddd *" $buffer]} {
 					.bottom.info configure -text "READY!"
 					.bottom.info configure -background green
-					after 100 send_tc
+				} else {
 				}
 			}
 			set buffer ""
 		} else {
 			append buffer $ch
 		}
-	}
+#	}
 }
 
 #####################################################################################
@@ -1289,79 +1056,80 @@ proc show_textline {wid line} {
 	incr tline
 }
 
-proc motorPitchNumber_check {n1 n2 op} {
-	global motorPitchNumber
-	global motorRollNumber
-	catch {set motorRollNumber [expr 1 - $motorPitchNumber]}
+proc motorNumberPitch_check {n1 n2 op} {
+	global par
+	catch {set par(motorNumberRoll) [expr 1 - $par(motorNumberPitch)]}
 }
-trace variable motorPitchNumber w motorPitchNumber_check
+trace variable par(motorNumberPitch) w motorNumberPitch_check
 
-proc motorRollNumber_check {n1 n2 op} {
-	global motorPitchNumber
-	global motorRollNumber
-	catch {set motorPitchNumber [expr 1 - $motorRollNumber]}
+proc motorNumberRoll_check {n1 n2 op} {
+	global par
+	catch {set par(motorNumberPitch) [expr 1 - $par(motorNumberRoll)]}
 }
-trace variable motorRollNumber w motorRollNumber_check
+trace variable par(motorNumberRoll) w motorNumberRoll_check
 
 proc show_help {helptext} {
 	tk_messageBox -icon info -message "$helptext" -type ok -parent .
 }
 
 proc gui_slider {wid variable min max step title tooltiptext helptext} {
-		label $wid
-		pack $wid -side top -expand yes -fill x
-		setTooltip $wid "$tooltiptext"
+	global par
+	label $wid
+	pack $wid -side top -expand yes -fill x
+	setTooltip $wid "$tooltiptext"
 
-			label $wid.label -text "$title" -width 5 -anchor w
-			pack $wid.label -side left -expand yes -fill x
+		label $wid.label -text "$title" -width 5 -anchor w
+		pack $wid.label -side left -expand yes -fill x
 
-			frame $wid.frame
-			pack $wid.frame -side left -expand yes -fill x
+		frame $wid.frame
+		pack $wid.frame -side left -expand yes -fill x
 
-				eval button $wid.frame.help -text \"?\" -width 1 -command \{show_help \"$helptext\"\}
-				pack $wid.frame.help -side right -expand no -fill none
+			eval button $wid.frame.help -text \"?\" -width 1 -command \{show_help \"$helptext\"\}
+			pack $wid.frame.help -side right -expand no -fill none
 
-				spinbox $wid.frame.spin -from $min -to $max -increment $step -width 10 -textvariable $variable -width 4
-				pack $wid.frame.spin -side right -expand yes -fill x
+			spinbox $wid.frame.spin -from $min -to $max -increment $step -width 10 -textvariable par($variable) -width 4
+			pack $wid.frame.spin -side right -expand yes -fill x
 
-				scale $wid.frame.scale -orient horizontal -from $min -to $max -showvalue 0 -resolution $step -variable $variable
-				pack $wid.frame.scale -side right -expand yes -fill x
+			scale $wid.frame.scale -orient horizontal -from $min -to $max -showvalue 0 -resolution $step -variable par($variable)
+			pack $wid.frame.scale -side right -expand yes -fill x
 }
 
 proc gui_spin {wid variable min max step title tooltiptext helptext} {
-		frame $wid
-		pack $wid -side top -expand yes -fill x
-		setTooltip $wid "$tooltiptext"
+	global par
+	frame $wid
+	pack $wid -side top -expand yes -fill x
+	setTooltip $wid "$tooltiptext"
 
-			label $wid.label -text "$title" -width 5 -anchor w
-			pack $wid.label -side left -expand yes -fill x
+		label $wid.label -text "$title" -width 5 -anchor w
+		pack $wid.label -side left -expand yes -fill x
 
-			frame $wid.frame
-			pack $wid.frame -side left -expand yes -fill x
+		frame $wid.frame
+		pack $wid.frame -side left -expand yes -fill x
 
-				eval button $wid.frame.help -text \"?\" -width 1 -command \{show_help \"$helptext\"\}
-				pack $wid.frame.help -side right -expand no -fill none
+			eval button $wid.frame.help -text \"?\" -width 1 -command \{show_help \"$helptext\"\}
+			pack $wid.frame.help -side right -expand no -fill none
 
-				spinbox $wid.frame.spin -from $min -to $max -increment $step -width 10 -textvariable $variable -width 4
-				pack $wid.frame.spin -side right -expand yes -fill x
+			spinbox $wid.frame.spin -from $min -to $max -increment $step -width 10 -textvariable par($variable) -width 4
+			pack $wid.frame.spin -side right -expand yes -fill x
 }
 
 proc gui_check {wid variable title title2 tooltiptext helptext} {
-		frame $wid
-		pack $wid -side top -expand yes -fill x
-		setTooltip $wid "$tooltiptext"
+	global par
+	frame $wid
+	pack $wid -side top -expand yes -fill x
+	setTooltip $wid "$tooltiptext"
 
-			label $wid.label -text "$title" -width 5 -anchor w
-			pack $wid.label -side left -expand yes -fill x
+		label $wid.label -text "$title" -width 5 -anchor w
+		pack $wid.label -side left -expand yes -fill x
 
-			frame $wid.frame
-			pack $wid.frame -side left -expand yes -fill x
+		frame $wid.frame
+		pack $wid.frame -side left -expand yes -fill x
 
-				checkbutton $wid.frame.check -text "$title2" -variable $variable -relief flat
-				pack $wid.frame.check -side left -expand yes -fill x
+			checkbutton $wid.frame.check -text "$title2" -variable par($variable) -relief flat
+			pack $wid.frame.check -side left -expand yes -fill x
 
-				eval button $wid.frame.help -text \"?\" -width 1 -command \{show_help \"$helptext\"\}
-				pack $wid.frame.help -side left -expand no -fill none
+			eval button $wid.frame.help -text \"?\" -width 1 -command \{show_help \"$helptext\"\}
+			pack $wid.frame.help -side left -expand no -fill none
 }
 
 proc gui_button {wid title tooltiptext command} {
@@ -1424,28 +1192,9 @@ wm title . "Brushless-Gimbal-Tool (for v$VERSION)"
 
 
 proc update_mpu {n1 n2 op} {
-	global reverseZ
-	global swapXY
+	global par
 	.note.general.settings.sensor.img.canv delete "arrows"
-#	if {$swapXY == 1} {
-#		.note.general.settings.sensor.img.canv create line 100 50 67 13 -fill green -arrow last -tag arrows
-#		.note.general.settings.sensor.img.canv create line 100 50 53 72 -fill red -arrow last -tag arrows
-#		if {$reverseZ == 1} {
-#			.note.general.settings.sensor.img.canv create line 100 50 100 100 -fill blue -arrow last -tag arrows
-#		} else {
-#			.note.general.settings.sensor.img.canv create line 100 50 100 5 -fill blue -arrow last -tag arrows
-#		}
-#	} else {
-#		.note.general.settings.sensor.img.canv create line 18 38 60 15 -fill red -arrow last -tag arrows
-#		.note.general.settings.sensor.img.canv create line 18 38 50 75 -fill green -arrow last -tag arrows
-#		if {$reverseZ == 1} {
-#			.note.general.settings.sensor.img.canv create line 18 38 18 100 -fill blue -arrow last -tag arrows
-#		} else {
-#			.note.general.settings.sensor.img.canv create line 18 38 18 5 -fill blue -arrow last -tag arrows
-#		}
-#	}
-
-	if {$swapXY == 1} {
+	if {$par(axisSwapXY) == 1} {
 		.note.general.settings.sensor.img.canv create line 18 38 60 15 -fill green -arrow last -tag arrows
 		.note.general.settings.sensor.img.canv create line 18 38 50 75 -fill red -arrow last -tag arrows
 		.note.general.settings.sensor.img.canv create text 55 75 -text "X" -fill red -tag arrows
@@ -1456,20 +1205,17 @@ proc update_mpu {n1 n2 op} {
 		.note.general.settings.sensor.img.canv create text 65 15 -text "X" -fill red -tag arrows
 		.note.general.settings.sensor.img.canv create text 55 75 -text "Y" -fill green -tag arrows
 	}
-	if {$reverseZ == 1} {
+	if {$par(axisReverseZ) == 1} {
 		.note.general.settings.sensor.img.canv create line 18 38 18 100 -fill blue -arrow last -tag arrows
 		.note.general.settings.sensor.img.canv create text 23 100 -text "Z" -fill blue -tag arrows
 	} else {
 		.note.general.settings.sensor.img.canv create line 18 38 18 5 -fill blue -arrow last -tag arrows
 		.note.general.settings.sensor.img.canv create text 23 7 -text "Z" -fill blue -tag arrows
 	}
-
-
-
 }
 
-trace variable reverseZ w update_mpu
-trace variable swapXY w update_mpu
+trace variable par(axisReverseZ) w update_mpu
+trace variable par(axisSwapXY) w update_mpu
 
 
 ttk::notebook .note
@@ -1487,8 +1233,11 @@ pack .note -fill both -expand yes -fill both -padx 2 -pady 3
 		labelframe .note.general.settings.rc -text "RC"
 		pack .note.general.settings.rc -side left -expand yes -fill both
 
+			gui_check .note.general.settings.rc.rcModePPM  rcModePPM  "RC Mode PPM" "PPM"      "ppm-sum oder single pwm rc-input" ""
 			gui_check .note.general.settings.rc.rcAbsolute rcAbsolute "RC Abs/Prop" "Absolute" "absolute or incremental rc input" "Absolute or Proportional mode is for RC Channel, Proportional is when you are using a second RC Transmitter to control your Gimbal, Absolute for normal Pot control on your RC Transmitter"
 			gui_spin .note.general.settings.rc.rcGain rcGain 0.0 200.0 0.2 "rcGain" "rc gain" "the RC Gain, how fast it react when you are change you RC channel you have it connected to"
+			gui_spin .note.general.settings.rc.rcLPF rcLPF 0.0 200.0 0.2 "rcLPF" "rc LPF" ""
+			gui_spin .note.general.settings.rc.rcMid rcMid 1000.0 2000.0 1.0 "rcMid" "RC-Mid" ""
 
 		labelframe .note.general.settings.sensor -text "Sensor"
 		pack .note.general.settings.sensor -side left -expand yes -fill both
@@ -1497,8 +1246,8 @@ pack .note -fill both -expand yes -fill both -padx 2 -pady 3
 			frame .note.general.settings.sensor.set
 			pack .note.general.settings.sensor.set -side left -expand yes -fill both
 
-				gui_check .note.general.settings.sensor.set.reverseZ reverseZ "reverseZ" "reversed" "Set Sensor Orientation: Z" "Sensor - Orientation"
-				gui_check .note.general.settings.sensor.set.swapXY swapXY "swapXY" "swapped" "Set Sensor Orientation: XY" "Sensor - Orientation"
+				gui_check .note.general.settings.sensor.set.axisReverseZ axisReverseZ "axisReverseZ" "reversed" "Set Sensor Orientation: Z" "Sensor - Orientation"
+				gui_check .note.general.settings.sensor.set.axisSwapXY axisSwapXY "axisSwapXY" "axisSwapXY" "Set Sensor Orientation: XY" "Sensor - Orientation"
 
 			frame .note.general.settings.sensor.img
 			pack .note.general.settings.sensor.img -side left -expand no -fill none
@@ -1546,11 +1295,12 @@ pack .note -fill both -expand yes -fill both -padx 2 -pady 3
 		gui_slider .note.pitch.i gyroPitchKi 0 100 0.1 "Iacc" "Iacc-Value" "Iacc-Value"
 		gui_slider .note.pitch.p gyroPitchKp 0 100 0.1 "P" "P-Value" "adjust (increase) the P Term in 1.0 Steps stop when the movement is perfect if you go too far the motor will start to vibrate"
 		gui_slider .note.pitch.d gyroPitchKd 0 100 0.1 "D" "D-Value" "D-Value"
-		gui_spin .note.pitch.number motorPitchNumber 0 2 1   "Number"  "Output-Port-Number" "if you find that the wrong motor is connected you can just change the 0 to the 1 and this will save unplugging your motors"
-		gui_check .note.pitch.dir   motorPitchDir            "Dir"     "Reverse" "Motor-Direction" "this is for reversing your motor if it is rotating in the wrong direction"
-		gui_spin .note.pitch.maxpwm motorPitchMaxpwm 0 255 1 "max PWM" "maximum Motor-PWM" "minimize the MAX PWM Steps as much as possible this will also help to stop the vibration in the motor, when you have got NO vibration you are ready"
-		gui_spin .note.pitch.rcmin  rcPitchMin -90 90 1      "RC-Min"  "minimum Angle" "the amount or rotation your motor will make on that axis"
-		gui_spin .note.pitch.rcmax  rcPitchMax -90 90 1      "RC-Max"  "maximum Angle" "the amount or rotation your motor will make on that axis"
+		gui_spin .note.pitch.number motorNumberPitch 0 2 1   "Number"  "Output-Port-Number" "if you find that the wrong motor is connected you can just change the 0 to the 1 and this will save unplugging your motors"
+		gui_check .note.pitch.dir   dirMotorPitch            "Dir"     "Reverse" "Motor-Direction" "this is for reversing your motor if it is rotating in the wrong direction"
+		gui_spin .note.pitch.maxpwm maxPWMmotorPitch 0 255 1 "max PWM" "maximum Motor-PWM" "minimize the MAX PWM Steps as much as possible this will also help to stop the vibration in the motor, when you have got NO vibration you are ready"
+		gui_spin .note.pitch.rcmin  minRCPitch -90 90 1      "RC-Min"  "minimum Angle" "the amount or rotation your motor will make on that axis"
+		gui_spin .note.pitch.rcmax  maxRCPitch -90 90 1      "RC-Max"  "maximum Angle" "the amount or rotation your motor will make on that axis"
+		gui_spin .note.pitch.rcChannelPitch rcChannelPitch 0 2 1   "RC-Channel"  "rcChannelPitch" ""
 
 
 	ttk::frame .note.roll
@@ -1559,23 +1309,13 @@ pack .note -fill both -expand yes -fill both -padx 2 -pady 3
 		gui_slider .note.roll.i gyroRollKi 0 100 0.1 "Iacc" "Iacc-Value" "Iacc-Value"
 		gui_slider .note.roll.p gyroRollKp 0 100 0.1 "P" "P-Value" "adjust (increase) the P Term in 1.0 Steps stop when the movement is perfect if you go too far the motor will start to vibrate"
 		gui_slider .note.roll.d gyroRollKd 0 100 0.1 "D" "D-Value" "D-Value"
-		gui_spin .note.roll.number motorRollNumber 0 2 1   "Number"  "Output-Port-Number" "if you find that the wrong motor is connected you can just change the 0 to the 1 and this will save unplugging your motors"
-		gui_check .note.roll.dir   motorRollDir            "Dir"     "Reverse" "Motor-Direction" "this is for reversing your motor if it is rotating in the wrong direction"
-		gui_spin .note.roll.maxpwm motorRollMaxpwm 0 255 1 "max PWM" "maximum Motor-PWM" "minimize the MAX PWM Steps as much as possible this will also help to stop the vibration in the motor, when you have got NO vibration you are ready"
-		gui_spin .note.roll.rcmin  rcRollMin -90 90 1      "RC-Min"  "minimum Angle" "the amount or rotation your motor will make on that axis"
-		gui_spin .note.roll.rcmax  rcRollMax -90 90 1      "RC-Max"  "maximum Angle" "the amount or rotation your motor will make on that axis"
+		gui_spin .note.roll.number motorNumberRoll 0 2 1   "Number"  "Output-Port-Number" "if you find that the wrong motor is connected you can just change the 0 to the 1 and this will save unplugging your motors"
+		gui_check .note.roll.dir   dirMotorRoll            "Dir"     "Reverse" "Motor-Direction" "this is for reversing your motor if it is rotating in the wrong direction"
+		gui_spin .note.roll.maxpwm maxPWMmotorRoll 0 255 1 "max PWM" "maximum Motor-PWM" "minimize the MAX PWM Steps as much as possible this will also help to stop the vibration in the motor, when you have got NO vibration you are ready"
+		gui_spin .note.roll.rcmin  minRCRoll -90 90 1      "RC-Min"  "minimum Angle" "the amount or rotation your motor will make on that axis"
+		gui_spin .note.roll.rcmax  maxRCRoll -90 90 1      "RC-Max"  "maximum Angle" "the amount or rotation your motor will make on that axis"
+		gui_spin .note.roll.rcChannelRoll rcChannelRoll 0 2 1   "RC-Channel"  "rcChannelRoll" ""
 
-	ttk::frame .note.yaw
-	.note add .note.yaw -text "Yaw"
-
-		gui_slider .note.yaw.i gyroyawKi 0 100 0.1 "Iacc" "Iacc-Value" "Iacc-Value"
-		gui_slider .note.yaw.p gyroyawKp 0 100 0.1 "P" "P-Value" "adjust (increase) the P Term in 1.0 Steps stop when the movement is perfect if you go too far the motor will start to vibrate"
-		gui_slider .note.yaw.d gyroyawKd 0 100 0.1 "D" "D-Value" "D-Value"
-		gui_spin .note.yaw.number motoryawNumber 0 2 1   "Number"  "Output-Port-Number" "if you find that the wrong motor is connected you can just change the 0 to the 1 and this will save unplugging your motors"
-		gui_check .note.yaw.dir   motoryawDir            "Dir"     "Reverse" "Motor-Direction" "this is for reversing your motor if it is rotating in the wrong direction"
-		gui_spin .note.yaw.maxpwm motoryawMaxpwm 0 255 1 "max PWM" "maximum Motor-PWM" "minimize the MAX PWM Steps as much as possible this will also help to stop the vibration in the motor, when you have got NO vibration you are ready"
-		gui_spin .note.yaw.rcmin  rcyawMin -90 90 1      "RC-Min"  "minimum Angle" "the amount or rotation your motor will make on that axis"
-		gui_spin .note.yaw.rcmax  rcyawMax -90 90 1      "RC-Max"  "maximum Angle" "the amount or rotation your motor will make on that axis"
 
 
 
@@ -1606,7 +1346,7 @@ frame .buttons
 pack .buttons -side top -expand no -fill x
 
 	gui_button .buttons.defaults "Defaults" "set defaults values" set_defaults
-	gui_button .buttons.load "Load" "load values from board into gui" send_tc
+	gui_button .buttons.load "Load" "load values from board into gui" send_par
 	gui_button .buttons.save "Save" "save values from gui into board" save_values
 	gui_button .buttons.load_from_file "Load from File" "load values from file into board and gui" load_values_from_file
 
@@ -1620,6 +1360,9 @@ pack .buttons_ext -side top -expand no -fill x
 	gui_button .buttons_ext.save2file "Save to File" "save values from gui into file" save_values2file
 
 
+label .helptext -relief sunken -text "BLG-Tool"
+pack .helptext -side top -expand no -fill x
+
 frame .bottom
 pack .bottom -side top -expand no -fill x
 
@@ -1632,12 +1375,12 @@ pack .bottom -side top -expand no -fill x
 	setTooltip .bottom.info "status informations"
 
 
-if {1 == 1} {
-	disable_all .note
-	disable_all .buttons
-	disable_all .buttons_ext
-	disable_all .device.close
-	enable_all .note.general.image
+## Trace parameters to update on change
+foreach var [array names par] {
+	if {$var == "vers"} {
+	} elseif {! [string match "*,*" $var]} {
+		trace variable par($var) w send_parvar
+	}
 }
 
 
