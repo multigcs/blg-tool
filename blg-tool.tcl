@@ -368,6 +368,17 @@ set Serial 0
 set LastValX 0
 set LastValY 0
 set chart 0
+set params "gyroPitchKp gyroPitchKi gyroPitchKd gyroRollKp gyroRollKi gyroRollKd accTimeConstant mpuLPF angleOffsetPitch angleOffsetRoll dirMotorPitch dirMotorRoll motorNumberPitch motorNumberRoll maxPWMmotorPitch maxPWMmotorRoll minRCPitch maxRCPitch minRCRoll maxRCRoll rcGain rcLPF rcModePPM rcChannelPitch rcChannelRoll rcMid rcAbsolute accOutput enableGyro enableACC axisReverseZ axisSwapXY"
+
+foreach var $params {
+	if {$var == "vers"} {
+	} elseif {! [string match "*,*" $var]} {
+		set par($var) 0
+		set par($var,scale) 1
+		set par($var,offset) 0
+	}
+}
+
 
 set par(gyroPitchKp,scale) 1000.0
 set par(gyroPitchKi,scale) 1000.0
@@ -375,65 +386,14 @@ set par(gyroPitchKd,scale) 1000.0
 set par(gyroRollKp,scale) 1000.0
 set par(gyroRollKi,scale) 1000.0
 set par(gyroRollKd,scale) 1000.0
-set par(accTimeConstant,scale) 1
-set par(mpuLPF,scale) 1
-set par(angleOffsetPitch,scale) 1
-set par(angleOffsetRoll,scale) 1
-set par(dirMotorPitch,scale) 1
-set par(dirMotorRoll,scale) 1
-set par(motorNumberPitch,scale) 1
-set par(motorNumberRoll,scale) 1
-set par(maxPWMmotorPitch,scale) 1
-set par(maxPWMmotorRoll,scale) 1
-set par(minRCPitch,scale) 1
-set par(maxRCPitch,scale) 1
-set par(minRCRoll,scale) 1
-set par(maxRCRoll,scale) 1
-set par(rcGain,scale) 1
-set par(rcLPF,scale) 1
-set par(rcModePPM,scale) 1
-set par(rcChannelPitch,scale) 1
-set par(rcChannelRoll,scale) 1
-set par(rcMid,scale) 1
-set par(rcAbsolute,scale) 1
-set par(accOutput,scale) 1
-set par(enableGyro,scale) 1
-set par(enableACC,scale) 1
-set par(axisReverseZ,scale) 1
-set par(axisSwapXY,scale) 1
+set par(angleOffsetPitch,scale) 100.0
+set par(angleOffsetRoll,scale) 100.0
+set par(rcLPF,scale) 10.0
+set par(rcChannelPitch,offset) 1
+set par(rcChannelRoll,offset) 1
+set par(motorNumberPitch,offset) 1
+set par(motorNumberRoll,offset) 1
 
-set par(gyroPitchKp) 0
-set par(gyroPitchKi) 0
-set par(gyroPitchKd) 0
-set par(gyroRollKp) 0
-set par(gyroRollKi) 0
-set par(gyroRollKd) 0
-set par(accTimeConstant) 0
-set par(mpuLPF) 0
-set par(angleOffsetPitch) 0
-set par(angleOffsetRoll) 0
-set par(dirMotorPitch) 0
-set par(dirMotorRoll) 0
-set par(motorNumberPitch) 0
-set par(motorNumberRoll) 0
-set par(maxPWMmotorPitch) 0
-set par(maxPWMmotorRoll) 0
-set par(minRCPitch) 0
-set par(maxRCPitch) 0
-set par(minRCRoll) 0
-set par(maxRCRoll) 0
-set par(rcGain) 0
-set par(rcLPF) 0
-set par(rcModePPM) 0
-set par(rcChannelPitch) 0
-set par(rcChannelRoll) 0
-set par(rcMid) 0
-set par(rcAbsolute) 0
-set par(accOutput) 0
-set par(enableGyro) 0
-set par(enableACC) 0
-set par(axisReverseZ) 0
-set par(axisSwapXY) 0
 
 
 set CHART_SCALE 0.5
@@ -536,8 +496,8 @@ proc send_parvar {n1 n2 op} {
 		        puts -nonewline $Serial "par $n2 1\n"
 		}
 	} else {
-		.bottom.info configure -text "SEND: par $n2 [expr $par($n2) * $par($n2,scale)]"
-	        puts -nonewline $Serial "par $n2 [expr $par($n2) * $par($n2,scale)]\n"
+		.bottom.info configure -text "SEND: par $n2 [expr $par($n2) * $par($n2,scale) - $par($n2,offset)]"
+	        puts -nonewline $Serial "par $n2 [expr $par($n2) * $par($n2,scale) - $par($n2,offset)]\n"
 	}
 	flush $Serial
 	after 20
@@ -629,7 +589,7 @@ proc save_values2file {} {
 		{"Text files"		{}		TEXT}
 		{"All files"		*}
 	}
-	set file [tk_getSaveFile -filetypes $types -parent . -initialfile bl-gimbal -defaultextension .txt]
+	set file [tk_getSaveFile -filetypes $types -parent . -initialfile blg-gimbal -defaultextension .txt]
 	if {$file != ""} {
 		set fp [open $file w]
 		foreach var [array names par] {
@@ -642,7 +602,7 @@ proc save_values2file {} {
 					        puts -nonewline $fp "par $var 1\n"
 					}
 				} else {
-				        puts -nonewline $fp "par $var [expr $par($var) * $par($var,scale)]\n"
+				        puts -nonewline $fp "par $var [expr $par($var) * $par($var,scale) - $par($var,offset)]\n"
 				}
 			}
 		}
@@ -734,19 +694,14 @@ proc rd_chid {chid} {
 		} elseif {$ch == "\n"} {
 			if {1 == 1} {
 				.bottom.info configure -text "INFO: $buffer"
-
+#				update
 				set var [lindex $buffer 0]
 				set val [lindex $buffer 1]
 
 				if {$var == "vers"} {
 					set par(vers) "$val"
-#					if {$par(vers) == $VERSION} {
-						.bottom.version configure -text "Firmware-Version: $par(vers)"
-						.bottom.version configure -background lightgray
-#					} else {
-#						.bottom.version configure -text "Firmware-Version: $par(vers) (wrong Version)"
-#						.bottom.version configure -background red
-#					}
+					.bottom.version configure -text "Firmware-Version: $par(vers)"
+					.bottom.version configure -background lightgray
 				} elseif {$var == "dirMotorPitch" || $var == "dirMotorRoll"} {
 					if {$val == -1} {
 						set par($var) 1
@@ -755,7 +710,7 @@ proc rd_chid {chid} {
 					}
 
 				} elseif {[info exists par($var,scale)]} {
-					set par($var) [expr $val / $par($var,scale)]
+					set par($var) [expr ($val + $par($var,offset)) / $par($var,scale)]
 				} elseif {[string match "* ACC *" $buffer]} {
 					set chart 1
 					.bottom.info configure -text "OAC: $buffer"
@@ -1058,13 +1013,25 @@ proc show_textline {wid line} {
 
 proc motorNumberPitch_check {n1 n2 op} {
 	global par
-	catch {set par(motorNumberRoll) [expr 1 - $par(motorNumberPitch)]}
+	catch {
+		if {$par(motorNumberPitch) == 1} {
+			set par(motorNumberRoll) 2
+		} else {
+			set par(motorNumberRoll) 1
+		}
+	}
 }
 trace variable par(motorNumberPitch) w motorNumberPitch_check
 
 proc motorNumberRoll_check {n1 n2 op} {
 	global par
-	catch {set par(motorNumberPitch) [expr 1 - $par(motorNumberRoll)]}
+	catch {
+		if {$par(motorNumberRoll) == 1} {
+			set par(motorNumberPitch) 2
+		} else {
+			set par(motorNumberPitch) 1
+		}
+	}
 }
 trace variable par(motorNumberRoll) w motorNumberRoll_check
 
@@ -1109,7 +1076,18 @@ proc gui_spin {wid variable min max step title tooltiptext helptext} {
 			eval button $wid.frame.help -text \"?\" -width 1 -command \{show_help \"$helptext\"\}
 			pack $wid.frame.help -side right -expand no -fill none
 
-			spinbox $wid.frame.spin -from $min -to $max -increment $step -width 10 -textvariable par($variable) -width 4
+			set diff [expr $max - $min]
+			if {$diff <= 8} {
+				set options ""
+				set num $min
+				while {$num <= $max}  {
+					set options "$options $num"
+					incr num
+				}
+				ttk::combobox $wid.frame.spin -textvariable par($variable) -state readonly -values $options
+			} else {
+				spinbox $wid.frame.spin -from $min -to $max -increment $step -width 10 -textvariable par($variable) -width 4
+			}
 			pack $wid.frame.spin -side right -expand yes -fill x
 }
 
@@ -1127,6 +1105,29 @@ proc gui_check {wid variable title title2 tooltiptext helptext} {
 
 			checkbutton $wid.frame.check -text "$title2" -variable par($variable) -relief flat
 			pack $wid.frame.check -side left -expand yes -fill x
+
+			eval button $wid.frame.help -text \"?\" -width 1 -command \{show_help \"$helptext\"\}
+			pack $wid.frame.help -side left -expand no -fill none
+}
+
+proc gui_radio {wid variable options title tooltiptext helptext} {
+	global par
+	frame $wid
+	pack $wid -side top -expand yes -fill x
+	setTooltip $wid "$tooltiptext"
+
+		label $wid.label -text "$title" -width 5 -anchor w
+		pack $wid.label -side left -expand yes -fill x
+
+		frame $wid.frame
+		pack $wid.frame -side left -expand yes -fill x
+
+			foreach option $options  {
+				set option_title [lindex $option 0]
+				set option_value [lindex $option 1]
+				radiobutton $wid.frame.check_$option -text "$option_title" -value $option_value -variable par($variable) -relief flat
+				pack $wid.frame.check_$option -side left -expand yes -fill x
+			}
 
 			eval button $wid.frame.help -text \"?\" -width 1 -command \{show_help \"$helptext\"\}
 			pack $wid.frame.help -side left -expand no -fill none
@@ -1235,9 +1236,9 @@ pack .note -fill both -expand yes -fill both -padx 2 -pady 3
 
 			gui_check .note.general.settings.rc.rcModePPM  rcModePPM  "RC Mode PPM" "PPM"      "ppm-sum oder single pwm rc-input" ""
 			gui_check .note.general.settings.rc.rcAbsolute rcAbsolute "RC Abs/Prop" "Absolute" "absolute or incremental rc input" "Absolute or Proportional mode is for RC Channel, Proportional is when you are using a second RC Transmitter to control your Gimbal, Absolute for normal Pot control on your RC Transmitter"
-			gui_spin .note.general.settings.rc.rcGain rcGain 0.0 200.0 0.2 "rcGain" "rc gain" "the RC Gain, how fast it react when you are change you RC channel you have it connected to"
-			gui_spin .note.general.settings.rc.rcLPF rcLPF 0.0 200.0 0.2 "rcLPF" "rc LPF" ""
-			gui_spin .note.general.settings.rc.rcMid rcMid 1000.0 2000.0 1.0 "rcMid" "RC-Mid" ""
+			gui_slider .note.general.settings.rc.rcGain rcGain 0.0 200.0 0.1 "rcGain" "rc gain" "the RC Gain, how fast it react when you are change you RC channel you have it connected to"
+			gui_slider .note.general.settings.rc.rcLPF rcLPF 1 20 0.1 "rcLPF" "RC low pass filter" "RC low pass filter in Absolute mode, specified speed of gimbal movement"
+			gui_slider .note.general.settings.rc.rcMid rcMid 1000 2000 1 "rcMid" "RC-Mid" ""
 
 		labelframe .note.general.settings.sensor -text "Sensor"
 		pack .note.general.settings.sensor -side left -expand yes -fill both
@@ -1247,7 +1248,12 @@ pack .note -fill both -expand yes -fill both -padx 2 -pady 3
 			pack .note.general.settings.sensor.set -side left -expand yes -fill both
 
 				gui_check .note.general.settings.sensor.set.axisReverseZ axisReverseZ "axisReverseZ" "reversed" "Set Sensor Orientation: Z" "Sensor - Orientation"
-				gui_check .note.general.settings.sensor.set.axisSwapXY axisSwapXY "axisSwapXY" "axisSwapXY" "Set Sensor Orientation: XY" "Sensor - Orientation"
+				gui_check .note.general.settings.sensor.set.axisSwapXY axisSwapXY "axisSwapXY" "swapped" "Set Sensor Orientation: XY" "Sensor - Orientation"
+				gui_slider .note.general.settings.sensor.set.accTimeConstant accTimeConstant 0 7 1 "accTimeConstant"  "accTimeConstant" "time constant of ACC complementary filter.  controls how fast the gimbal follows ACC.  unit = 1 sec, e.g. 7 = 7 seconds"
+				gui_slider .note.general.settings.sensor.set.mpuLPF mpuLPF 0 6 1 "mpuLPF" "low pass filter of gyro" "low pass filter of gyro (DLPFMode)   legal values are 0...6, 0=fastest 6=slowest   use slow values if high frequency oscillations occur (still experimental)"
+				gui_check .note.general.settings.sensor.set.enableGyro enableGyro "enabled" "enableGyro" "Gyro update in control loop" "Gyro update in control loop, just for test and adjustment purposes"
+				gui_check .note.general.settings.sensor.set.enableACC enableACC "enabled" "enableACC" "ACC update in control loop" "ACC update in control loop, just for test and adjustment purposes"
+
 
 			frame .note.general.settings.sensor.img
 			pack .note.general.settings.sensor.img -side left -expand no -fill none
@@ -1256,6 +1262,7 @@ pack .note -fill both -expand yes -fill both -padx 2 -pady 3
 				pack .note.general.settings.sensor.img.canv -side left
 				.note.general.settings.sensor.img.canv create image 0 0 -anchor nw -image sensor
 				update_mpu 0 0 0
+
 
 
 	labelframe .note.general.chart -text "Chart"
@@ -1295,12 +1302,15 @@ pack .note -fill both -expand yes -fill both -padx 2 -pady 3
 		gui_slider .note.pitch.i gyroPitchKi 0 100 0.1 "Iacc" "Iacc-Value" "Iacc-Value"
 		gui_slider .note.pitch.p gyroPitchKp 0 100 0.1 "P" "P-Value" "adjust (increase) the P Term in 1.0 Steps stop when the movement is perfect if you go too far the motor will start to vibrate"
 		gui_slider .note.pitch.d gyroPitchKd 0 100 0.1 "D" "D-Value" "D-Value"
-		gui_spin .note.pitch.number motorNumberPitch 0 2 1   "Number"  "Output-Port-Number" "if you find that the wrong motor is connected you can just change the 0 to the 1 and this will save unplugging your motors"
+		gui_radio .note.pitch.number motorNumberPitch "{ch1 1} {ch2 2}" "Number"  "Output-Port-Number" "if you find that the wrong motor is connected you can just change the 0 to the 1 and this will save unplugging your motors"
 		gui_check .note.pitch.dir   dirMotorPitch            "Dir"     "Reverse" "Motor-Direction" "this is for reversing your motor if it is rotating in the wrong direction"
-		gui_spin .note.pitch.maxpwm maxPWMmotorPitch 0 255 1 "max PWM" "maximum Motor-PWM" "minimize the MAX PWM Steps as much as possible this will also help to stop the vibration in the motor, when you have got NO vibration you are ready"
-		gui_spin .note.pitch.rcmin  minRCPitch -90 90 1      "RC-Min"  "minimum Angle" "the amount or rotation your motor will make on that axis"
-		gui_spin .note.pitch.rcmax  maxRCPitch -90 90 1      "RC-Max"  "maximum Angle" "the amount or rotation your motor will make on that axis"
-		gui_spin .note.pitch.rcChannelPitch rcChannelPitch 0 2 1   "RC-Channel"  "rcChannelPitch" ""
+		gui_slider .note.pitch.maxpwm maxPWMmotorPitch 0 255 1 "max PWM" "maximum Motor-PWM" "minimize the MAX PWM Steps as much as possible this will also help to stop the vibration in the motor, when you have got NO vibration you are ready"
+#		gui_radio .note.pitch.rcChannelPitch rcChannelPitch "{ch1 0} {ch2 1} {ch3 2} {ch4 3} {ch5 4} {ch6 5} {ch7 6} {ch8 7}" "RC-Channel"  "rcChannelPitch" ""
+		gui_spin .note.pitch.rcChannelPitch rcChannelPitch 1 8 1   "RC-Channel"  "rcChannelPitch" "RC channel assignment for RC pitch, legal values are 0 to 7 in PPM mode"
+		gui_slider .note.pitch.rcmin  minRCPitch -90 90 1      "RC-Min"  "minimum Angle" "the amount or rotation your motor will make on that axis"
+		gui_slider .note.pitch.rcmax  maxRCPitch -90 90 1      "RC-Max"  "maximum Angle" "the amount or rotation your motor will make on that axis"
+		gui_slider .note.pitch.aop angleOffsetPitch -90 90 1 "angleOffsetPitch" "angleOffsetPitch" "angleOffsetPitch"
+
 
 
 	ttk::frame .note.roll
@@ -1309,12 +1319,13 @@ pack .note -fill both -expand yes -fill both -padx 2 -pady 3
 		gui_slider .note.roll.i gyroRollKi 0 100 0.1 "Iacc" "Iacc-Value" "Iacc-Value"
 		gui_slider .note.roll.p gyroRollKp 0 100 0.1 "P" "P-Value" "adjust (increase) the P Term in 1.0 Steps stop when the movement is perfect if you go too far the motor will start to vibrate"
 		gui_slider .note.roll.d gyroRollKd 0 100 0.1 "D" "D-Value" "D-Value"
-		gui_spin .note.roll.number motorNumberRoll 0 2 1   "Number"  "Output-Port-Number" "if you find that the wrong motor is connected you can just change the 0 to the 1 and this will save unplugging your motors"
+		gui_radio .note.roll.number motorNumberRoll "{ch1 1} {ch2 2}" "Number"  "Output-Port-Number" "if you find that the wrong motor is connected you can just change the 0 to the 1 and this will save unplugging your motors"
 		gui_check .note.roll.dir   dirMotorRoll            "Dir"     "Reverse" "Motor-Direction" "this is for reversing your motor if it is rotating in the wrong direction"
-		gui_spin .note.roll.maxpwm maxPWMmotorRoll 0 255 1 "max PWM" "maximum Motor-PWM" "minimize the MAX PWM Steps as much as possible this will also help to stop the vibration in the motor, when you have got NO vibration you are ready"
-		gui_spin .note.roll.rcmin  minRCRoll -90 90 1      "RC-Min"  "minimum Angle" "the amount or rotation your motor will make on that axis"
-		gui_spin .note.roll.rcmax  maxRCRoll -90 90 1      "RC-Max"  "maximum Angle" "the amount or rotation your motor will make on that axis"
-		gui_spin .note.roll.rcChannelRoll rcChannelRoll 0 2 1   "RC-Channel"  "rcChannelRoll" ""
+		gui_slider .note.roll.maxpwm maxPWMmotorRoll 0 255 1 "max PWM" "maximum Motor-PWM" "minimize the MAX PWM Steps as much as possible this will also help to stop the vibration in the motor, when you have got NO vibration you are ready"
+		gui_spin .note.roll.rcChannelRoll rcChannelRoll 1 8 1   "RC-Channel"  "rcChannelRoll" "RC channel assignment for RC roll, legal values are 0 to 7 in PPM mode"
+		gui_slider .note.roll.rcmin  minRCRoll -90 90 1      "RC-Min"  "minimum Angle" "the amount or rotation your motor will make on that axis"
+		gui_slider .note.roll.rcmax  maxRCRoll -90 90 1      "RC-Max"  "maximum Angle" "the amount or rotation your motor will make on that axis"
+		gui_slider .note.roll.aop angleOffsetRoll -90 90 1 "angleOffsetRoll" "angleOffsetRoll" "angleOffsetRoll"
 
 
 
