@@ -389,6 +389,8 @@ set par(gyroRollKd,scale) 1000.0
 set par(angleOffsetPitch,scale) 100.0
 set par(angleOffsetRoll,scale) 100.0
 set par(rcLPF,scale) 10.0
+set par(maxPWMmotorPitch,scale) 2.5
+set par(maxPWMmotorRoll,scale) 2.5
 set par(rcChannelPitch,offset) 1
 set par(rcChannelRoll,offset) 1
 set par(motorNumberPitch,offset) 1
@@ -470,17 +472,40 @@ proc draw_chart {} {
 		.bottom.info configure -text "SEND: oac 0"
         	puts -nonewline $Serial "oac 0\n"
 		flush $Serial
+		.note.general.chart.fr1.button configure -text "Start"
 	} else {
 		set chart 1
 		.bottom.info configure -text "SEND: oac 1"
         	puts -nonewline $Serial "oac 1\n"
 		flush $Serial
+		.note.general.chart.fr1.button configure -text "Stop"
 	}
 }
 
 proc send_parvar {n1 n2 op} {
 	global Serial
 	global par
+
+	## Value-Check ##
+	if {$n2 == "minRCRoll"} {
+		if {$par(minRCRoll) > $par(maxRCRoll)} {
+			set par(maxRCRoll) $par(minRCRoll)
+		}
+	} elseif {$n2 == "maxRCRoll"} {
+		if {$par(maxRCRoll) < $par(minRCRoll)} {
+			set par(minRCRoll) $par(maxRCRoll)
+		}
+	}
+	if {$n2 == "minRCPitch"} {
+		if {$par(minRCPitch) > $par(maxRCPitch)} {
+			set par(maxRCPitch) $par(minRCPitch)
+		}
+	} elseif {$n2 == "maxRCPitch"} {
+		if {$par(maxRCPitch) < $par(minRCPitch)} {
+			set par(minRCPitch) $par(maxRCPitch)
+		}
+	}
+
 	if {$Serial == 0} {
 		.bottom.info configure -background red
 		.bottom.info configure -text "not connected"
@@ -717,9 +742,9 @@ proc rd_chid {chid} {
 					global LastValX
 					global LastValY
 					global CHART_SCALE
-					set ValX [lindex $buffer 0]
+					set ValX [expr [lindex $buffer 0] / 100.0]
 					set TEST [lindex $buffer 1]
-					set ValY [lindex $buffer 2]
+					set ValY [expr [lindex $buffer 2] / 100.0]
 					if {($TEST == "ACC" || $TEST == "DMP") && [string is double -strict $ValX] && [string is double -strict $ValY]} {
 						incr chart_count 1
 						if {$chart_count >= 450} {
@@ -1045,8 +1070,8 @@ proc gui_slider {wid variable min max step title tooltiptext helptext} {
 	pack $wid -side top -expand yes -fill x
 	setTooltip $wid "$tooltiptext"
 
-		label $wid.label -text "$title" -width 5 -anchor w
-		pack $wid.label -side left -expand yes -fill x
+		label $wid.label -text "$title" -width 14 -anchor w
+		pack $wid.label -side left -expand no -fill x
 
 		frame $wid.frame
 		pack $wid.frame -side left -expand yes -fill x
@@ -1067,8 +1092,8 @@ proc gui_spin {wid variable min max step title tooltiptext helptext} {
 	pack $wid -side top -expand yes -fill x
 	setTooltip $wid "$tooltiptext"
 
-		label $wid.label -text "$title" -width 5 -anchor w
-		pack $wid.label -side left -expand yes -fill x
+		label $wid.label -text "$title" -width 14 -anchor w
+		pack $wid.label -side left -expand no -fill x
 
 		frame $wid.frame
 		pack $wid.frame -side left -expand yes -fill x
@@ -1097,13 +1122,13 @@ proc gui_check {wid variable title title2 tooltiptext helptext} {
 	pack $wid -side top -expand yes -fill x
 	setTooltip $wid "$tooltiptext"
 
-		label $wid.label -text "$title" -width 5 -anchor w
-		pack $wid.label -side left -expand yes -fill x
+		label $wid.label -text "$title" -width 14 -anchor w
+		pack $wid.label -side left -expand no -fill x
 
 		frame $wid.frame
 		pack $wid.frame -side left -expand yes -fill x
 
-			checkbutton $wid.frame.check -text "$title2" -variable par($variable) -relief flat
+			checkbutton $wid.frame.check -text "$title2" -variable par($variable) -relief flat -anchor w
 			pack $wid.frame.check -side left -expand yes -fill x
 
 			eval button $wid.frame.help -text \"?\" -width 1 -command \{show_help \"$helptext\"\}
@@ -1116,8 +1141,8 @@ proc gui_radio {wid variable options title tooltiptext helptext} {
 	pack $wid -side top -expand yes -fill x
 	setTooltip $wid "$tooltiptext"
 
-		label $wid.label -text "$title" -width 5 -anchor w
-		pack $wid.label -side left -expand yes -fill x
+		label $wid.label -text "$title" -width 14 -anchor w
+		pack $wid.label -side left -expand no -fill x
 
 		frame $wid.frame
 		pack $wid.frame -side left -expand yes -fill x
@@ -1234,7 +1259,7 @@ pack .note -fill both -expand yes -fill both -padx 2 -pady 3
 		labelframe .note.general.settings.rc -text "RC"
 		pack .note.general.settings.rc -side left -expand yes -fill both
 
-			gui_check .note.general.settings.rc.rcModePPM  rcModePPM  "RC Mode PPM" "PPM"      "ppm-sum oder single pwm rc-input" ""
+			gui_check .note.general.settings.rc.rcModePPM  rcModePPM  "RC Mode PPM/PWM" "PPM" "ppm-sum oder single pwm rc-input" ""
 			gui_check .note.general.settings.rc.rcAbsolute rcAbsolute "RC Abs/Prop" "Absolute" "absolute or incremental rc input" "Absolute or Proportional mode is for RC Channel, Proportional is when you are using a second RC Transmitter to control your Gimbal, Absolute for normal Pot control on your RC Transmitter"
 			gui_slider .note.general.settings.rc.rcGain rcGain 0.0 200.0 0.1 "rcGain" "rc gain" "the RC Gain, how fast it react when you are change you RC channel you have it connected to"
 			gui_slider .note.general.settings.rc.rcLPF rcLPF 1 20 0.1 "rcLPF" "RC low pass filter" "RC low pass filter in Absolute mode, specified speed of gimbal movement"
@@ -1249,10 +1274,10 @@ pack .note -fill both -expand yes -fill both -padx 2 -pady 3
 
 				gui_check .note.general.settings.sensor.set.axisReverseZ axisReverseZ "axisReverseZ" "reversed" "Set Sensor Orientation: Z" "Sensor - Orientation"
 				gui_check .note.general.settings.sensor.set.axisSwapXY axisSwapXY "axisSwapXY" "swapped" "Set Sensor Orientation: XY" "Sensor - Orientation"
-				gui_slider .note.general.settings.sensor.set.accTimeConstant accTimeConstant 0 7 1 "accTimeConstant"  "accTimeConstant" "time constant of ACC complementary filter.  controls how fast the gimbal follows ACC.  unit = 1 sec, e.g. 7 = 7 seconds"
+				gui_slider .note.general.settings.sensor.set.accTimeConstant accTimeConstant 0 20 1 "accTimeConstant"  "accTimeConstant" "time constant of ACC complementary filter.  controls how fast the gimbal follows ACC.  unit = 1 sec, e.g. 7 = 7 seconds"
 				gui_slider .note.general.settings.sensor.set.mpuLPF mpuLPF 0 6 1 "mpuLPF" "low pass filter of gyro" "low pass filter of gyro (DLPFMode)   legal values are 0...6, 0=fastest 6=slowest   use slow values if high frequency oscillations occur (still experimental)"
-				gui_check .note.general.settings.sensor.set.enableGyro enableGyro "enabled" "enableGyro" "Gyro update in control loop" "Gyro update in control loop, just for test and adjustment purposes"
-				gui_check .note.general.settings.sensor.set.enableACC enableACC "enabled" "enableACC" "ACC update in control loop" "ACC update in control loop, just for test and adjustment purposes"
+				gui_check .note.general.settings.sensor.set.enableGyro enableGyro "enableGyro" "enabled" "Gyro update in control loop" "Gyro update in control loop, just for test and adjustment purposes"
+				gui_check .note.general.settings.sensor.set.enableACC enableACC "enableACC" "enabled" "ACC update in control loop" "ACC update in control loop, just for test and adjustment purposes"
 
 
 			frame .note.general.settings.sensor.img
@@ -1275,7 +1300,7 @@ pack .note -fill both -expand yes -fill both -padx 2 -pady 3
 		setTooltip .note.general.chart.chart1 "acc chart"
 
 		frame .note.general.chart.fr1
-		pack .note.general.chart.fr1 -side left -expand no -fill both
+		pack .note.general.chart.fr1 -side left -expand yes -fill both
 
 			button .note.general.chart.fr1.button -text "Start" -width 5 -relief raised -command {
 				draw_chart
@@ -1284,10 +1309,10 @@ pack .note -fill both -expand yes -fill both -padx 2 -pady 3
 			setTooltip .note.general.chart.fr1.button "start/stop chart drawing"
 
 			frame .note.general.chart.fr1.scale
-			pack .note.general.chart.fr1.scale -side top -expand no -fill both
+			pack .note.general.chart.fr1.scale -side top -expand no -fill x
 
 				scale .note.general.chart.fr1.scale.slider -orient horizontal -from 0.1 -to 10.0 -showvalue 0 -resolution 0.1 -variable CHART_SCALE
-				pack .note.general.chart.fr1.scale.slider -side left -expand no -fill x
+				pack .note.general.chart.fr1.scale.slider -side left -expand yes -fill x
 				setTooltip .note.general.chart.fr1.scale.slider "Y-Scale for the chart"
 
 				button .note.general.chart.fr1.scale.help -text "?" -width 1 -command {
@@ -1302,24 +1327,24 @@ pack .note -fill both -expand yes -fill both -padx 2 -pady 3
 		labelframe .note.pitch.pid -text "PID" -padx 10 -pady 10
 		pack .note.pitch.pid -side top -expand no -fill x
 
-			gui_slider .note.pitch.pid.p gyroPitchKp 0 100 0.1 "P" "P-Value" "adjust (increase) the P Term in 1.0 Steps stop when the movement is perfect if you go too far the motor will start to vibrate"
-			gui_slider .note.pitch.pid.d gyroPitchKd 0 100 0.1 "D" "D-Value" "D-Value"
-			gui_slider .note.pitch.pid.i gyroPitchKi 0 100 0.1 "Iacc" "Iacc-Value" "Iacc-Value"
+			gui_slider .note.pitch.pid.p gyroPitchKp 0 100 0.01 "P" "P-Value" "adjust (increase) the P Term in 1.0 Steps stop when the movement is perfect if you go too far the motor will start to vibrate"
+			gui_slider .note.pitch.pid.i gyroPitchKi 0 100 0.01 "I" "I-Value" "I-Value"
+			gui_slider .note.pitch.pid.d gyroPitchKd 0 100 0.01 "D" "D-Value" "D-Value"
 
-		labelframe .note.pitch.hw -text "Hardware" -padx 10 -pady 10
+		labelframe .note.pitch.hw -text "Motor" -padx 10 -pady 10
 		pack .note.pitch.hw -side top -expand no -fill x
 
-			gui_radio .note.pitch.hw.number motorNumberPitch "{ch1 1} {ch2 2}" "Port-Number"  "Output-Port-Number" "if you find that the wrong motor is connected you can just change the 0 to the 1 and this will save unplugging your motors"
+			gui_radio .note.pitch.hw.number motorNumberPitch "{Motor-1 1} {Motor-2 2}" "Port-Number"  "Output-Port-Number" "if you find that the wrong motor is connected you can just change the 0 to the 1 and this will save unplugging your motors"
 			gui_check .note.pitch.hw.dir   dirMotorPitch            "Direction"     "Reverse" "Motor-Direction" "this is for reversing your motor if it is rotating in the wrong direction"
-			gui_slider .note.pitch.hw.maxpwm maxPWMmotorPitch 0 255 1 "max PWM" "maximum Motor-PWM" "minimize the MAX PWM Steps as much as possible this will also help to stop the vibration in the motor, when you have got NO vibration you are ready"
+			gui_slider .note.pitch.hw.maxpwm maxPWMmotorPitch 0 100 0.1 "max PWM (%)" "maximum Motor-PWM" "minimize the MAX PWM Steps as much as possible this will also help to stop the vibration in the motor, when you have got NO vibration you are ready"
 
 		labelframe .note.pitch.rc -text "RC" -padx 10 -pady 10
 		pack .note.pitch.rc -side top -expand no -fill x
 
 			gui_spin .note.pitch.rc.rcChannelPitch rcChannelPitch 1 8 1   "RC-Channel"  "rcChannelPitch" "RC channel assignment for RC pitch, legal values are 0 to 7 in PPM mode"
-			gui_slider .note.pitch.rc.rcmin  minRCPitch -90 90 1      "RC-Min"  "minimum Angle" "the amount or rotation your motor will make on that axis"
-			gui_slider .note.pitch.rc.rcmax  maxRCPitch -90 90 1      "RC-Max"  "maximum Angle" "the amount or rotation your motor will make on that axis"
-			gui_slider .note.pitch.rc.aop angleOffsetPitch -90 90 0.1 "angleOffsetPitch" "angleOffsetPitch" "angleOffsetPitch"
+			gui_slider .note.pitch.rc.rcmin  minRCPitch -120 120 1      "RC-Min"  "minimum Angle" "the amount or rotation your motor will make on that axis"
+			gui_slider .note.pitch.rc.rcmax  maxRCPitch -120 120 1      "RC-Max"  "maximum Angle" "the amount or rotation your motor will make on that axis"
+			gui_slider .note.pitch.rc.aop angleOffsetPitch -120 120 0.1 "angleOffsetPitch" "angleOffsetPitch" "angleOffsetPitch"
 
 
 
@@ -1330,23 +1355,23 @@ pack .note -fill both -expand yes -fill both -padx 2 -pady 3
 		pack .note.roll.pid -side top -expand no -fill x
 
 			gui_slider .note.roll.pid.p gyroRollKp 0 100 0.1 "P" "P-Value" "adjust (increase) the P Term in 1.0 Steps stop when the movement is perfect if you go too far the motor will start to vibrate"
+			gui_slider .note.roll.pid.i gyroRollKi 0 100 0.1 "I" "I-Value" "I-Value"
 			gui_slider .note.roll.pid.d gyroRollKd 0 100 0.1 "D" "D-Value" "D-Value"
-			gui_slider .note.roll.pid.i gyroRollKi 0 100 0.1 "Iacc" "Iacc-Value" "Iacc-Value"
 
-		labelframe .note.roll.hw -text "Hardware" -padx 10 -pady 10
+		labelframe .note.roll.hw -text "Motor" -padx 10 -pady 10
 		pack .note.roll.hw -side top -expand no -fill x
 
-			gui_radio .note.roll.hw.number motorNumberRoll "{ch1 1} {ch2 2}" "Port-Number"  "Output-Port-Number" "if you find that the wrong motor is connected you can just change the 0 to the 1 and this will save unplugging your motors"
+			gui_radio .note.roll.hw.number motorNumberRoll "{Motor-1 1} {Motor-2 2}" "Port-Number"  "Output-Port-Number" "if you find that the wrong motor is connected you can just change the 0 to the 1 and this will save unplugging your motors"
 			gui_check .note.roll.hw.dir   dirMotorRoll            "Direction"     "Reverse" "Motor-Direction" "this is for reversing your motor if it is rotating in the wrong direction"
-			gui_slider .note.roll.hw.maxpwm maxPWMmotorRoll 0 255 1 "max PWM" "maximum Motor-PWM" "minimize the MAX PWM Steps as much as possible this will also help to stop the vibration in the motor, when you have got NO vibration you are ready"
+			gui_slider .note.roll.hw.maxpwm maxPWMmotorRoll 0 100 0.1 "max PWM (%)" "maximum Motor-PWM" "minimize the MAX PWM Steps as much as possible this will also help to stop the vibration in the motor, when you have got NO vibration you are ready"
 
 		labelframe .note.roll.rc -text "RC" -padx 10 -pady 10
 		pack .note.roll.rc -side top -expand no -fill x
 
 			gui_spin .note.roll.rc.rcChannelRoll rcChannelRoll 1 8 1   "RC-Channel"  "rcChannelRoll" "RC channel assignment for RC roll, legal values are 0 to 7 in PPM mode"
-			gui_slider .note.roll.rc.rcmin  minRCRoll -90 90 1      "RC-Min"  "minimum Angle" "the amount or rotation your motor will make on that axis"
-			gui_slider .note.roll.rc.rcmax  maxRCRoll -90 90 1      "RC-Max"  "maximum Angle" "the amount or rotation your motor will make on that axis"
-			gui_slider .note.roll.rc.aop angleOffsetRoll -90 90 0.1 "angleOffsetRoll" "angleOffsetRoll" "angleOffsetRoll"
+			gui_slider .note.roll.rc.rcmin  minRCRoll -120 120 1      "RC-Min"  "minimum Angle" "the amount or rotation your motor will make on that axis"
+			gui_slider .note.roll.rc.rcmax  maxRCRoll -120 120 1      "RC-Max"  "maximum Angle" "the amount or rotation your motor will make on that axis"
+			gui_slider .note.roll.rc.aop angleOffsetRoll -120 120 0.1 "angleOffsetRoll" "angleOffsetRoll" "angleOffsetRoll"
 
 
 
