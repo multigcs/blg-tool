@@ -296,8 +296,16 @@ if {$HEXDATA != ""} {
 			set ArduinoSerial [ArduinoSerial_Init [.device.spin get] 57600]
 			ArduinoReset
 			ArduinoSerial_SendCMD $defs(STK_GET_SIGN_ON)
-			ArduinoSendData "0x0000" $HEXDATA
-			ArduinoReset
+			if {$ArduinoTimeout != 0} {
+				.bottom.info configure -text "ERROR: upload firmware"
+				.bottom.info configure -background red
+				update
+				after 1000
+			} else {
+				.bottom.info configure -text "start uploading firmware"
+				ArduinoSendData "0x0000" $HEXDATA
+				ArduinoReset
+			}
 			after 500
 			connect_serial
 		}
@@ -331,7 +339,7 @@ if {[string match "*Linux*" $tcl_platform(os)]} {
 	set comports ""
 	set device ""
 	catch {
-		set comports [glob /dev/ttyUSB*]
+		set comports "[glob /dev/ttyUSB*] [glob /dev/ttyACM*]"
 		set device "[lindex $comports end]"
 	}
 } elseif {[string match "*Windows*" $tcl_platform(os)]} {
