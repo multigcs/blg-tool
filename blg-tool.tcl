@@ -480,13 +480,13 @@ proc draw_chart {} {
 		.bottom.info configure -text "SEND: oac 0"
         	puts -nonewline $Serial "oac 0\n"
 		flush $Serial
-		.note.general.chart.fr1.button configure -text "Start"
+		.chartview.chart.fr1.button configure -text "Start"
 	} else {
 		set chart 1
 		.bottom.info configure -text "SEND: oac 1"
         	puts -nonewline $Serial "oac 1\n"
 		flush $Serial
-		.note.general.chart.fr1.button configure -text "Stop"
+		.chartview.chart.fr1.button configure -text "Stop"
 	}
 }
 
@@ -584,7 +584,7 @@ proc load_values_from_file {} {
 			}
 			.bottom.info configure -text "load: done"
 			update
-			connect_serial
+
 		} else {
 			.bottom.info configure -text "load: error, reading file: $file"
 			update
@@ -689,7 +689,7 @@ proc set_defaults {} {
 }
 
 #####################################################################################
-# Serial-Calback
+# Serial-Callback
 #####################################################################################
 
 proc rd_chid {chid} {
@@ -738,14 +738,14 @@ proc rd_chid {chid} {
 						if {$chart_count >= 450} {
 							set chart_count 0
 						}
-						.note.general.chart.chart1 delete "line_$chart_count"
-						.note.general.chart.chart1 create line $chart_count [expr 100 - ($LastValX / 2 * $CHART_SCALE + 50)] [expr $chart_count + 1] [expr 100 - ($ValX * $CHART_SCALE / 2 + 50)] -fill orange -tags "line_$chart_count"
-						.note.general.chart.chart1 create line $chart_count [expr 100 - ($LastValY / 2 * $CHART_SCALE + 50)] [expr $chart_count + 1] [expr 100 - ($ValY * $CHART_SCALE / 2 + 50)] -fill green -tags "line_$chart_count"
-						.note.general.chart.chart1 delete "pos"
-						.note.general.chart.chart1 create line [expr $chart_count + 1] 0 [expr $chart_count + 1] 100 -fill yellow -tags "pos"
-						.note.general.chart.chart1 create text 5 10 -text "Pitch: $ValX" -anchor w -fill orange -tags "pos"
-						.note.general.chart.chart1 create text 5 25 -text "Roll:  $ValY" -anchor w -fill green -tags "pos"
-						.note.general.chart.chart1 create text 5 90 -text "Scale:  $CHART_SCALE" -anchor w -fill green -tags "pos"
+						.chartview.chart.chart1 delete "line_$chart_count"
+						.chartview.chart.chart1 create line $chart_count [expr 100 - ($LastValX / 2 * $CHART_SCALE + 50)] [expr $chart_count + 1] [expr 100 - ($ValX * $CHART_SCALE / 2 + 50)] -fill orange -tags "line_$chart_count"
+						.chartview.chart.chart1 create line $chart_count [expr 100 - ($LastValY / 2 * $CHART_SCALE + 50)] [expr $chart_count + 1] [expr 100 - ($ValY * $CHART_SCALE / 2 + 50)] -fill green -tags "line_$chart_count"
+						.chartview.chart.chart1 delete "pos"
+						.chartview.chart.chart1 create line [expr $chart_count + 1] 0 [expr $chart_count + 1] 100 -fill yellow -tags "pos"
+						.chartview.chart.chart1 create text 5 10 -text "Pitch: $ValX" -anchor w -fill orange -tags "pos"
+						.chartview.chart.chart1 create text 5 25 -text "Roll:  $ValY" -anchor w -fill green -tags "pos"
+						.chartview.chart.chart1 create text 5 90 -text "Scale:  $CHART_SCALE" -anchor w -fill green -tags "pos"
 						set LastValX $ValX
 						set LastValY $ValY
 					}
@@ -1247,7 +1247,7 @@ pack .note -fill both -expand yes -fill both -padx 2 -pady 3
 		labelframe .note.general.settings.rc -text "RC"
 		pack .note.general.settings.rc -side left -expand yes -fill both
 
-			gui_check .note.general.settings.rc.rcModePPM  rcModePPM  "RC PPM/PWM" "PPM" "Mode of RC input, PPM sum oder single PWM RC inputs on A1/A2" "config.rcModePPM: PPM sum oder single PWM RC inputs on A1/A2: PPM sum input on A2 or single RC PWM inputs on A2=Ch0, A1=Ch1"
+			gui_check .note.general.settings.rc.rcModePPM  rcModePPM  "RC PPM/PWM" "PPM" "Mode of RC input, PPM sum oder single PWM RC inputs on A1/A2" "config.rcModePPM: PPM sum oder single PWM RC inputs on A0/A1/A2: PPM sum input on A2 or single RC PWM inputs on A2=Ch0, A1=Ch1, A0=Ch3"
 			gui_check .note.general.settings.rc.rcAbsolute rcAbsolute "RC Abs/Prop" "Absolute" "Absolute or Incremental RC control" "config.rcAbsolute: Absolute or Incremental RC control, Absolute: gimbal postion follows RC transmitters directly, Proportional: RC controls the gimbal speed, thus in RC stick in center position (1500us) gimbal stops moving, where as the gimbal starts moving if stick is moved"
 			gui_slider .note.general.settings.rc.rcGain rcGain -200 200.0 0.1 "RC Gain" "RC gain" "config.rcGain: RC Gain in Proportional mode: specifies the gain of the RC channel, larger values increas the speed of the gimbal movement"
 			gui_slider .note.general.settings.rc.rcLPF rcLPF 1 20 0.1 "RC Low Pass" "RC low pass filter" "config.rcLPF: RC low pass filter in Absolute mode: specifies speed of gimbal movement (sec)"
@@ -1277,37 +1277,20 @@ pack .note -fill both -expand yes -fill both -padx 2 -pady 3
 				update_mpu 0 0 0
 
 
-
-	labelframe .note.general.chart -text "Chart"
-	pack .note.general.chart -side top -expand no -fill both
-
-		canvas .note.general.chart.chart1 -relief raised -width 450 -height 100
-		pack .note.general.chart.chart1 -side left
-		.note.general.chart.chart1 create rec 1 1 450 100 -fill black
-		.note.general.chart.chart1 create line 0 50 450 50 -fill white
-		setTooltip .note.general.chart.chart1 "acc chart"
-
-		frame .note.general.chart.fr1
-		pack .note.general.chart.fr1 -side left -expand yes -fill both
-
-			button .note.general.chart.fr1.button -text "Start" -width 5 -relief raised -command {
-				draw_chart
-			}
-			pack .note.general.chart.fr1.button -side top -expand yes -fill both
-			setTooltip .note.general.chart.fr1.button "start/stop chart drawing"
-
-			frame .note.general.chart.fr1.scale
-			pack .note.general.chart.fr1.scale -side top -expand no -fill x
-
-				scale .note.general.chart.fr1.scale.slider -orient horizontal -from 0.1 -to 10.0 -showvalue 0 -resolution 0.1 -variable CHART_SCALE
-				pack .note.general.chart.fr1.scale.slider -side left -expand yes -fill x
-				setTooltip .note.general.chart.fr1.scale.slider "Y-Scale for the chart"
-
-				button .note.general.chart.fr1.scale.help -text "?" -width 1 -command {
-					show_help "Y-Scale for the chart"
-				}
-				pack .note.general.chart.fr1.scale.help -side right -expand no -fill none
-
+	labelframe .note.general.file -text "File"
+	pack .note.general.file -side top -expand no -fill both
+  frame .note.general.file.buttons
+  pack .note.general.file.buttons -side top -expand no -fill x
+  
+  	gui_button .note.general.file.buttons.defaults "Defaults" "set defaults values" set_defaults
+    gui_button .note.general.file.load "Load" "load values from board into gui" send_par
+    gui_button .note.general.file.save "Save" "save values from gui into board" save_values
+    gui_button .note.general.file.load_from_file "Load from File" "load values from file into board and gui" load_values_from_file
+  
+    gui_button .note.general.file.buttons.gyro_cal "Gyro-Cal" "gyro recalibration" gyro_cal
+    gui_button .note.general.file.buttons.load_from_flash "Load from Flash" "load values from flash into board and gui" load_from_flash
+    gui_button .note.general.file.buttons.save_to_flash "Save to Flash" "save values from board into flash" save_to_flash
+    gui_button .note.general.file.buttons.save2file "Save to File" "save values from gui into file" save_values2file
 
 	ttk::frame .note.pitch
 	.note add .note.pitch -text "Pitch"
@@ -1329,7 +1312,7 @@ pack .note -fill both -expand yes -fill both -padx 2 -pady 3
 		labelframe .note.pitch.rc -text "RC" -padx 10 -pady 10
 		pack .note.pitch.rc -side top -expand no -fill x
 
-			gui_spin .note.pitch.rc.rcChannelPitch rcChannelPitch 1 16 1 "RC Channel"  "rcChannelPitch" "config.rcChannelPitch: RC channel assignment for RC pitch, legal values 1..16 in PPM mode, 1..2 in PWM mode"
+			gui_spin .note.pitch.rc.rcChannelPitch rcChannelPitch 1 16 1 "RC Channel"  "rcChannelPitch" "config.rcChannelPitch: RC channel assignment for RC pitch, legal values 1..16 in PPM mode, 1..3 in PWM mode"
 			gui_slider .note.pitch.rc.rcmin  minRCPitch -120 120 1       "RC min"  "minimum RC Angle" "config.minRCPitch: the amount or rotation your motor will make on that axis"
 			gui_slider .note.pitch.rc.rcmax  maxRCPitch -120 120 1       "RC max"  "maximum RC Angle" "config.maxRCPitch: the amount or rotation your motor will make on that axis"
 			gui_slider .note.pitch.rc.aop angleOffsetPitch -120 120 0.1  "Angle Offset" "Angle Offset" "config.angleOffsetPitch: offset adjust for pitch zero position (deg)"
@@ -1356,12 +1339,42 @@ pack .note -fill both -expand yes -fill both -padx 2 -pady 3
 		labelframe .note.roll.rc -text "RC" -padx 10 -pady 10
 		pack .note.roll.rc -side top -expand no -fill x
 
-			gui_spin .note.roll.rc.rcChannelRoll rcChannelRoll 1 16 1 "RC Channel"  "rcChannelRoll" "config.rcChannelRoll: RC channel assignment for RC roll, llegal values 1..16 in PPM mode, 1..2 in PWM mode"
+			gui_spin .note.roll.rc.rcChannelRoll rcChannelRoll 1 16 1 "RC Channel"  "rcChannelRoll" "config.rcChannelRoll: RC channel assignment for RC roll, llegal values 1..16 in PPM mode, 1..3 in PWM mode"
 			gui_slider .note.roll.rc.rcmin  minRCRoll -120 120 1      "RC Min"  "minimum Angle" "config.minRCRoll: the amount or rotation your motor will make on that axis"
 			gui_slider .note.roll.rc.rcmax  maxRCRoll -120 120 1      "RC Max"  "maximum Angle" "config.maxRCRoll: the amount or rotation your motor will make on that axis"
 			gui_slider .note.roll.rc.aop angleOffsetRoll -120 120 0.1 "Angle Offset" "angleOffsetRoll" "config.angleOffsetRoll: offset adjust for roll zero position (deg)"
 
+frame .chartview
+pack .chartview -side top -expand no -fill x
+	labelframe .chartview.chart -text "Chart"
+	pack .chartview.chart -side top -expand no -fill both
 
+		canvas .chartview.chart.chart1 -relief raised -width 450 -height 100
+		pack .chartview.chart.chart1 -side left
+		.chartview.chart.chart1 create rec 1 1 450 100 -fill black
+		.chartview.chart.chart1 create line 0 50 450 50 -fill white
+		setTooltip .chartview.chart.chart1 "acc chart"
+
+		frame .chartview.chart.fr1
+		pack .chartview.chart.fr1 -side left -expand yes -fill both
+
+			button .chartview.chart.fr1.button -text "Start" -width 5 -relief raised -command {
+				draw_chart
+			}
+			pack .chartview.chart.fr1.button -side top -expand yes -fill both
+			setTooltip .chartview.chart.fr1.button "start/stop chart drawing"
+
+			frame .chartview.chart.fr1.scale
+			pack .chartview.chart.fr1.scale -side top -expand no -fill x
+
+				scale .chartview.chart.fr1.scale.slider -orient horizontal -from 0.1 -to 50.0 -showvalue 0 -resolution 0.1 -variable CHART_SCALE
+				pack .chartview.chart.fr1.scale.slider -side left -expand yes -fill x
+				setTooltip .chartview.chart.fr1.scale.slider "Y-Scale for the chart"
+
+				button .chartview.chart.fr1.scale.help -text "?" -width 1 -command {
+					show_help "Y-Scale for the chart"
+				}
+				pack .chartview.chart.fr1.scale.help -side right -expand no -fill none
 
 labelframe .device -text "Connection"
 pack .device -side top -expand no -fill x
@@ -1385,25 +1398,7 @@ setTooltip .device "serial port selection"
 	}
 	pack .device.close -side left -expand no -fill x
 
-
-frame .buttons
-pack .buttons -side top -expand no -fill x
-
-	gui_button .buttons.defaults "Defaults" "set defaults values" set_defaults
-	gui_button .buttons.load "Load" "load values from board into gui" send_par
-	gui_button .buttons.save "Save" "save values from gui into board" save_values
-	gui_button .buttons.load_from_file "Load from File" "load values from file into board and gui" load_values_from_file
-
-
-frame .buttons_ext
-pack .buttons_ext -side top -expand no -fill x
-
-	gui_button .buttons_ext.gyro_cal "Gyro-Cal" "gyro recalibration" gyro_cal
-	gui_button .buttons_ext.load_from_flash "Load from Flash" "load values from flash into board and gui" load_from_flash
-	gui_button .buttons_ext.save_to_flash "Save to Flash" "save values from board into flash" save_to_flash
-	gui_button .buttons_ext.save2file "Save to File" "save values from gui into file" save_values2file
-
-
+ 
 label .helptext -relief sunken -text "BLG-Tool"
 pack .helptext -side top -expand no -fill x
 
