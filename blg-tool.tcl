@@ -1277,20 +1277,24 @@ pack .note -fill both -expand yes -fill both -padx 2 -pady 3
 				update_mpu 0 0 0
 
 
-	labelframe .note.general.file -text "File"
-	pack .note.general.file -side top -expand no -fill both
-  frame .note.general.file.buttons
-  pack .note.general.file.buttons -side top -expand no -fill x
+	labelframe .note.general.buttons -text "File"
+	pack .note.general.buttons -side top -expand no -fill both
+
+	frame .note.general.buttons.line1
+	pack .note.general.buttons.line1 -side top -expand no -fill x
   
-  	gui_button .note.general.file.buttons.defaults "Defaults" "set defaults values" set_defaults
-    gui_button .note.general.file.load "Load" "load values from board into gui" send_par
-    gui_button .note.general.file.save "Save" "save values from gui into board" save_values
-    gui_button .note.general.file.load_from_file "Load from File" "load values from file into board and gui" load_values_from_file
+		gui_button .note.general.buttons.line1.defaults "Defaults" "set defaults values" set_defaults
+		gui_button .note.general.buttons.line1.load "Load" "load values from board into gui" send_par
+		gui_button .note.general.buttons.line1.save "Save" "save values from gui into board" save_values
+		gui_button .note.general.buttons.line1.load_from_file "Load from File" "load values from file into board and gui" load_values_from_file
+
+	frame .note.general.buttons.line2
+	pack .note.general.buttons.line2 -side top -expand no -fill x
   
-    gui_button .note.general.file.buttons.gyro_cal "Gyro-Cal" "gyro recalibration" gyro_cal
-    gui_button .note.general.file.buttons.load_from_flash "Load from Flash" "load values from flash into board and gui" load_from_flash
-    gui_button .note.general.file.buttons.save_to_flash "Save to Flash" "save values from board into flash" save_to_flash
-    gui_button .note.general.file.buttons.save2file "Save to File" "save values from gui into file" save_values2file
+		gui_button .note.general.buttons.line2.gyro_cal "Gyro-Cal" "gyro recalibration" gyro_cal
+		gui_button .note.general.buttons.line2.load_from_flash "Load from Flash" "load values from flash into board and gui" load_from_flash
+		gui_button .note.general.buttons.line2.save_to_flash "Save to Flash" "save values from board into flash" save_to_flash
+		gui_button .note.general.buttons.line2.save2file "Save to File" "save values from gui into file" save_values2file
 
 	ttk::frame .note.pitch
 	.note add .note.pitch -text "Pitch"
