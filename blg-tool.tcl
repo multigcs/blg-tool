@@ -338,10 +338,9 @@ menu .menu.help -tearoff 0
 if {[string match "*Linux*" $tcl_platform(os)]} {
 	set comports ""
 	set device ""
-	catch {
-		set comports "[glob /dev/ttyUSB*] [glob /dev/ttyACM*]"
-		set device "[lindex $comports end]"
-	}
+	catch {append comports "[glob /dev/ttyUSB*]"}
+	catch {append comports "[glob /dev/ttyACM*]"}
+	set device "[lindex $comports end]"
 } elseif {[string match "*Windows*" $tcl_platform(os)]} {
 	set comports {"com1:" "com2:" "com3:" "com4:" "com5:" "com6:" "com7:" "com8:" "com9:" "com10:" "com11:" "com12:" "com13:" "com14:" "com15:"}
 	catch {
