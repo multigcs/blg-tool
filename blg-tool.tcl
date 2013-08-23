@@ -463,6 +463,11 @@ proc connect_serial {} {
 		.bottom.info configure -background green
 		.bottom.info configure -text "connected"
 	}
+
+        puts -nonewline $Serial "OAC 0\n"
+	flush $Serial
+	after 20
+
 	after 6000 send_par
 }
 
@@ -529,6 +534,12 @@ proc send_par {} {
 	}
 	.bottom.info configure -text "PAR: reading values..."
 
+        puts -nonewline $Serial "\n"
+	flush $Serial
+	after 20
+        puts -nonewline $Serial "\n"
+	flush $Serial
+	after 20
         puts -nonewline $Serial "par\n"
 	flush $Serial
 }
@@ -729,9 +740,14 @@ proc rd_chid {chid} {
 					global LastValX
 					global LastValY
 					global CHART_SCALE
-					set ValX [expr [lindex $buffer 0] / 1000.0]
-					set TEST [lindex $buffer 1]
-					set ValY [expr [lindex $buffer 2] / 1000.0]
+					set ValX "0.0"
+					set TEST ""
+					set ValY "0.0"
+					catch {
+						set ValX [expr [lindex $buffer 0] / 1000.0]
+						set TEST [lindex $buffer 1]
+						set ValY [expr [lindex $buffer 2] / 1000.0]
+					}
 					if {($TEST == "ACC" || $TEST == "DMP") && [string is double -strict $ValX] && [string is double -strict $ValY]} {
 						incr chart_count 1
 						if {$chart_count >= 450} {
